@@ -1,4 +1,4 @@
-# 🛡️ Cybersecurity Resources Repository
+# Cybersecurity Resources Repository
 
 A collection of cybersecurity notes, tools documentation, and learning resources for cybersecurity enthusiasts.
 
@@ -45,7 +45,7 @@ A collection of cybersecurity notes, tools documentation, and learning resources
 ├── 📁 python/
 │   ├── scapy_library.md
 │   ├── psutil_library.md
-│   └── examples/
+│   └── others/
 │
 ├── 📁 projects/
 │   ├── ctf-writeups/
