@@ -1,0 +1,2606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web3 Security Auditor — 8-Month Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080c10;
+  --bg2: #0d1117;
+  --bg3: #111820;
+  --bg4: #161e28;
+  --border: #1e2d3d;
+  --border2: #243447;
+  --green: #00ff88;
+  --green2: #00cc6a;
+  --green3: #004d28;
+  --green-dim: #00ff8820;
+  --cyan: #00d4ff;
+  --cyan-dim: #00d4ff15;
+  --orange: #ff8c00;
+  --orange-dim: #ff8c0015;
+  --red: #ff4444;
+  --red-dim: #ff444415;
+  --purple: #a855f7;
+  --purple-dim: #a855f715;
+  --yellow: #ffd700;
+  --text: #c9d8e8;
+  --text2: #7a9bb5;
+  --text3: #4a6580;
+  --sidebar-w: 300px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* SCANLINE EFFECT */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* SIDEBAR */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-track { background: var(--bg2); }
+#sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+.sidebar-header {
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg2);
+  z-index: 10;
+}
+.sidebar-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+.sidebar-sub {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: .05em;
+}
+
+.sidebar-search {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-search input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  outline: none;
+  transition: border-color .2s;
+}
+.sidebar-search input:focus { border-color: var(--green); }
+.sidebar-search input::placeholder { color: var(--text3); }
+
+.progress-overview {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.prog-label {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+.prog-label span { color: var(--green); }
+.prog-bar-outer {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+.prog-bar-inner {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--cyan));
+  border-radius: 2px;
+  width: 0%;
+  transition: width .5s ease;
+}
+.prog-days {
+  font-size: 10px;
+  color: var(--text3);
+}
+.prog-days b { color: var(--yellow); }
+
+.nav-section {
+  padding: 8px 0;
+}
+.nav-phase-header {
+  padding: 6px 16px;
+  font-size: 9px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.nav-phase-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.nav-item {
+  padding: 5px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background .15s;
+  text-decoration: none;
+  color: var(--text2);
+  font-size: 11px;
+  border-left: 2px solid transparent;
+}
+.nav-item:hover {
+  background: var(--bg3);
+  color: var(--text);
+  border-left-color: var(--border2);
+}
+.nav-item.active {
+  background: var(--green-dim);
+  color: var(--green);
+  border-left-color: var(--green);
+}
+.nav-item.done {
+  color: var(--text3);
+  text-decoration: line-through;
+}
+.nav-item.done::before { content: '✓ '; color: var(--green2); }
+.nav-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-m1 { background: var(--cyan); }
+.dot-m2 { background: var(--green); }
+.dot-m3 { background: var(--orange); }
+.dot-m4 { background: var(--purple); }
+
+.nav-week-group { padding: 2px 0; }
+
+/* MAIN */
+#main {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+}
+
+/* TOP BAR */
+.topbar {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  flex: 1;
+}
+.topbar-title span { color: var(--green); }
+.topbar-badges {
+  display: flex;
+  gap: 8px;
+}
+.tbadge {
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+  letter-spacing: .05em;
+}
+.tbadge-green { border-color: var(--green3); color: var(--green); background: var(--green-dim); }
+.tbadge-cyan { border-color: #003d4d; color: var(--cyan); background: var(--cyan-dim); }
+
+/* HERO */
+.hero {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 48px 40px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, var(--green-dim) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 12px;
+}
+.hero-eyebrow::before { content: '> '; }
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 36px;
+  line-height: 1.1;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.hero-title span { color: var(--green); }
+.hero-desc {
+  color: var(--text2);
+  max-width: 620px;
+  line-height: 1.8;
+  margin-bottom: 32px;
+  font-size: 13px;
+}
+.hero-stats {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  width: fit-content;
+}
+.hstat {
+  padding: 14px 24px;
+  border-right: 1px solid var(--border);
+  text-align: center;
+}
+.hstat:last-child { border-right: none; }
+.hstat-val {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: #fff;
+  display: block;
+}
+.hstat-val.green { color: var(--green); }
+.hstat-val.cyan { color: var(--cyan); }
+.hstat-val.orange { color: var(--orange); }
+.hstat-val.yellow { color: var(--yellow); }
+.hstat-lbl {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* GROUND RULES */
+.ground-rules {
+  margin: 40px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.gr-header {
+  background: var(--bg3);
+  padding: 14px 20px;
+  font-size: 10px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--text3);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.gr-header::before { content: '//'; color: var(--green); }
+.gr-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.gr-item {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.gr-item:nth-child(2n) { border-right: none; }
+.gr-item:nth-last-child(-n+2) { border-bottom: none; }
+.gr-rule {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cyan);
+  margin-bottom: 4px;
+  letter-spacing: .05em;
+}
+.gr-rule::before { content: '$ '; color: var(--text3); }
+.gr-desc { font-size: 12px; color: var(--text2); line-height: 1.7; }
+
+/* PHASE SECTION */
+.phase-section {
+  margin: 40px;
+  margin-bottom: 0;
+}
+.phase-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.phase-num {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 48px;
+  line-height: 1;
+  opacity: .12;
+  color: #fff;
+  min-width: 60px;
+}
+.phase-info { flex: 1; }
+.phase-tag {
+  font-size: 10px;
+  padding: 2px 10px;
+  border-radius: 3px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.tag-m1 { background: var(--cyan-dim); color: var(--cyan); border: 1px solid #003d4d; }
+.tag-m2 { background: var(--green-dim); color: var(--green); border: 1px solid var(--green3); }
+.tag-m3 { background: var(--orange-dim); color: var(--orange); border: 1px solid #4d2a00; }
+.tag-m4 { background: var(--purple-dim); color: var(--purple); border: 1px solid #3d1a6e; }
+
+.phase-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.phase-subtitle { color: var(--text2); font-size: 12px; }
+.phase-goal {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+.phase-goal strong { color: var(--green); }
+
+/* WEEK BLOCK */
+.week-block {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.week-block:hover { border-color: var(--border2); }
+.week-header {
+  padding: 14px 20px;
+  background: var(--bg3);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid transparent;
+  transition: background .15s;
+}
+.week-header:hover { background: var(--bg4); }
+.week-header.open { border-bottom-color: var(--border); }
+.wk-num {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: .1em;
+  min-width: 60px;
+}
+.wk-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text);
+}
+.wk-meta {
+  font-size: 10px;
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.wk-tag {
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .05em;
+}
+.wk-chevron {
+  color: var(--text3);
+  transition: transform .2s;
+  font-size: 10px;
+}
+.wk-chevron.open { transform: rotate(180deg); }
+
+.week-body { display: none; }
+.week-body.open { display: block; }
+
+/* DAY CARD */
+.day-card {
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+}
+.day-card:last-child { border-bottom: none; }
+.day-header {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  background: var(--bg2);
+  transition: background .15s;
+}
+.day-header:hover { background: var(--bg3); }
+.day-num-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 11px;
+  flex-shrink: 0;
+  border: 1px solid;
+}
+.badge-m1 { background: var(--cyan-dim); border-color: #003d4d; color: var(--cyan); }
+.badge-m2 { background: var(--green-dim); border-color: var(--green3); color: var(--green); }
+.badge-m3 { background: var(--orange-dim); border-color: #4d2a00; color: var(--orange); }
+.badge-m4 { background: var(--purple-dim); border-color: #3d1a6e; color: var(--purple); }
+
+.day-info { flex: 1; }
+.day-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.day-tags { display: flex; gap: 6px; margin-top: 3px; flex-wrap: wrap; }
+.dtag {
+  font-size: 9px;
+  padding: 1px 7px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  color: var(--text3);
+  letter-spacing: .05em;
+}
+.dtag-critical { border-color: #4d1a1a; color: var(--red); background: var(--red-dim); }
+.dtag-practice { border-color: var(--green3); color: var(--green2); background: var(--green-dim); }
+.dtag-wargame { border-color: #4d3a00; color: var(--yellow); background: #ffd70010; }
+.dtag-tool { border-color: #3d2a00; color: var(--orange); background: var(--orange-dim); }
+.dtag-review { border-color: #3d1a6e; color: var(--purple); background: var(--purple-dim); }
+
+.day-done-toggle {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all .15s;
+  color: transparent;
+  font-size: 11px;
+}
+.day-done-toggle.checked {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--bg);
+}
+.day-done-toggle:hover { border-color: var(--green); }
+.day-expand-icon { color: var(--text3); font-size: 10px; flex-shrink: 0; transition: transform .2s; }
+.day-expand-icon.open { transform: rotate(180deg); }
+
+.day-body { display: none; padding: 0 20px 20px; background: var(--bg); }
+.day-body.open { display: block; }
+
+.day-section { margin-top: 16px; }
+.ds-label {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ds-study { color: var(--cyan); }
+.ds-practice { color: var(--green); }
+.ds-resource { color: var(--orange); }
+.ds-checkpoint { color: var(--yellow); }
+.ds-journal { color: var(--purple); }
+
+.step {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+  align-items: flex-start;
+}
+.step-num {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--text3);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.step-content { flex: 1; font-size: 12px; color: var(--text2); line-height: 1.7; }
+.step-content strong { color: var(--text); }
+.step-content a {
+  color: var(--cyan);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color .15s;
+}
+.step-content a:hover { border-bottom-color: var(--cyan); }
+
+/* CODE BLOCK */
+.code-block {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin: 12px 0;
+  overflow: hidden;
+}
+.code-header {
+  padding: 8px 14px;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: .05em;
+}
+.code-header::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+}
+.code-body {
+  padding: 14px;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--text);
+}
+.code-body::-webkit-scrollbar { height: 4px; }
+.code-body::-webkit-scrollbar-track { background: var(--bg2); }
+.code-body::-webkit-scrollbar-thumb { background: var(--border2); }
+
+/* Syntax highlight */
+.k { color: #ff7b72; } /* keyword */
+.s { color: #a5d6ff; } /* string */
+.c { color: #4a6580; font-style: italic; } /* comment */
+.f { color: var(--green); } /* function */
+.t { color: var(--cyan); } /* type */
+.n { color: var(--orange); } /* number */
+.p { color: #f0883e; } /* pragma/special */
+
+/* CHECKPOINT */
+.checkpoint {
+  background: #1a1200;
+  border: 1px solid #4d3a00;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--yellow);
+}
+.checkpoint::before { content: '⚡ CHECKPOINT: '; font-weight: 600; }
+
+/* BUG JOURNAL */
+.bug-journal {
+  background: var(--purple-dim);
+  border: 1px solid #3d1a6e;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #c084fc;
+}
+.bug-journal::before { content: '📓 BUG JOURNAL: '; font-weight: 600; color: var(--purple); }
+
+/* VULN TABLE */
+.vuln-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 11px;
+}
+.vuln-table th {
+  padding: 8px 12px;
+  background: var(--bg3);
+  color: var(--text3);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.vuln-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  vertical-align: top;
+}
+.vuln-table tr:hover td { background: var(--bg3); }
+.vuln-table td:first-child { color: var(--text3); font-size: 10px; }
+.sev-high { color: var(--red); font-weight: 600; }
+.sev-med { color: var(--orange); font-weight: 600; }
+.sev-low { color: var(--yellow); font-weight: 600; }
+.sev-info { color: var(--text3); }
+
+/* RESOURCE CARD */
+.resource-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+.res-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  transition: border-color .2s;
+}
+.res-card:hover { border-color: var(--border2); }
+.res-card a {
+  text-decoration: none;
+  display: block;
+}
+.res-name {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--cyan);
+  margin-bottom: 3px;
+}
+.res-url { font-size: 10px; color: var(--text3); margin-bottom: 6px; }
+.res-desc { font-size: 11px; color: var(--text2); line-height: 1.6; }
+.res-tag {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 9px;
+  padding: 1px 7px;
+  border-radius: 3px;
+  background: var(--green-dim);
+  color: var(--green2);
+  border: 1px solid var(--green3);
+  letter-spacing: .05em;
+}
+
+/* DIVIDER */
+.phase-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 40px;
+}
+
+/* COMPARISON SECTION */
+.comparison {
+  margin: 40px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.comp-header {
+  padding: 14px 20px;
+  background: var(--bg3);
+  font-size: 10px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--text3);
+  border-bottom: 1px solid var(--border);
+}
+.comp-header::before { content: '// '; color: var(--green); }
+.comp-grid { display: grid; grid-template-columns: auto 1fr 1fr; }
+.comp-cell {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  font-size: 11px;
+}
+.comp-cell:nth-child(3n) { border-right: none; }
+.comp-cell.header {
+  background: var(--bg3);
+  color: var(--text3);
+  font-size: 10px;
+  letter-spacing: .08em;
+  font-weight: 600;
+}
+.comp-cell.metric { color: var(--text3); font-size: 11px; }
+.comp-cell.web3 { color: var(--green); }
+.comp-cell.web { color: var(--text2); }
+.comp-cell:last-child, .comp-cell:nth-last-child(-n+3) { border-bottom: none; }
+
+/* VULN CHEATSHEET */
+.cheat-section {
+  margin: 40px;
+}
+.cheat-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.cheat-sub { color: var(--text3); font-size: 11px; margin-bottom: 20px; }
+
+/* QUICK REF */
+.quick-ref {
+  margin: 40px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 80px;
+}
+
+/* FILTER TABS */
+.filter-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 16px 40px 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+  overflow-x: auto;
+}
+.ftab {
+  padding: 8px 16px;
+  border-radius: 6px 6px 0 0;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--text3);
+  border: 1px solid transparent;
+  border-bottom: none;
+  transition: all .15s;
+  white-space: nowrap;
+  letter-spacing: .03em;
+}
+.ftab:hover { color: var(--text); background: var(--bg3); }
+.ftab.active {
+  background: var(--bg);
+  border-color: var(--border);
+  color: var(--text);
+  border-bottom: 1px solid var(--bg);
+  margin-bottom: -1px;
+}
+
+/* SCROLLBAR for main */
+#main::-webkit-scrollbar { width: 4px; }
+#main::-webkit-scrollbar-track { background: var(--bg); }
+#main::-webkit-scrollbar-thumb { background: var(--border2); }
+
+/* ANIMATIONS */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.day-body.open { animation: fadeIn .15s ease; }
+
+/* MARK DONE STYLES */
+.day-header.done .day-title { color: var(--text3); text-decoration: line-through; }
+.day-header.done .day-num-badge { opacity: .4; }
+
+/* MOBILE TOGGLE */
+#sidebar-toggle {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 200;
+  background: var(--green);
+  color: var(--bg);
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,255,136,.3);
+}
+
+@media (max-width: 900px) {
+  #sidebar { position: fixed; left: -300px; transition: left .3s; }
+  #sidebar.open { left: 0; }
+  #sidebar-toggle { display: flex; align-items: center; justify-content: center; }
+  .hero-title { font-size: 24px; }
+  .resource-grid { grid-template-columns: 1fr; }
+  .gr-grid { grid-template-columns: 1fr; }
+  .gr-item { border-right: none; }
+  .filter-tabs { padding: 12px 16px 0; }
+  .phase-section, .ground-rules, .comparison, .cheat-section, .quick-ref { margin: 20px; }
+  .hero { padding: 24px 20px; }
+  .topbar { padding: 12px 20px; }
+}
+
+/* TERMINAL CURSOR */
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.cursor { animation: blink 1s infinite; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Web3 Security<span class="cursor">_</span></div>
+    <div class="sidebar-sub">8-Month Auditor Roadmap · 100% Free</div>
+  </div>
+
+  <div class="sidebar-search">
+    <input type="text" id="navSearch" placeholder="Search days or topics..." oninput="filterNav(this.value)">
+  </div>
+
+  <div class="progress-overview">
+    <div class="prog-label">Progress <span id="progPct">0%</span></div>
+    <div class="prog-bar-outer"><div class="prog-bar-inner" id="progBar"></div></div>
+    <div class="prog-days">Days completed: <b id="doneCount">0</b> / <b>190</b></div>
+  </div>
+
+  <div class="nav-section" id="navList">
+    <div class="nav-phase-header">Phase 1 · EVM & Solidity</div>
+
+    <div class="nav-week-group">
+      <a class="nav-item" href="#w1" onclick="openWeek('w1')"><span class="nav-dot dot-m1"></span>Week 1 — Blockchain & EVM Basics</a>
+      <a class="nav-item" href="#w2" onclick="openWeek('w2')"><span class="nav-dot dot-m1"></span>Week 2 — Advanced Solidity</a>
+      <a class="nav-item" href="#w3" onclick="openWeek('w3')"><span class="nav-dot dot-m1"></span>Week 3 — Foundry Setup & Testing</a>
+      <a class="nav-item" href="#w4" onclick="openWeek('w4')"><span class="nav-dot dot-m1"></span>Week 4 — Cyfrin Security Begins</a>
+    </div>
+
+    <div class="nav-phase-header">Phase 2 · Wargames & Vulns</div>
+    <div class="nav-week-group">
+      <a class="nav-item" href="#w5" onclick="openWeek('w5')"><span class="nav-dot dot-m2"></span>Week 5 — Secureum Bootcamp</a>
+      <a class="nav-item" href="#w6" onclick="openWeek('w6')"><span class="nav-dot dot-m2"></span>Weeks 6–7 — Ethernaut Lvl 0–14</a>
+      <a class="nav-item" href="#w7" onclick="openWeek('w7')"><span class="nav-dot dot-m2"></span>Weeks 7–8 — Ethernaut Lvl 15–24</a>
+      <a class="nav-item" href="#w8" onclick="openWeek('w8')"><span class="nav-dot dot-m2"></span>Weeks 9–11 — Damn Vulnerable DeFi</a>
+      <a class="nav-item" href="#w9" onclick="openWeek('w9')"><span class="nav-dot dot-m2"></span>Weeks 12–13 — Real Hack Postmortems</a>
+      <a class="nav-item" href="#w10" onclick="openWeek('w10')"><span class="nav-dot dot-m2"></span>Week 14 — Capture The Ether</a>
+    </div>
+
+    <div class="nav-phase-header">Phase 3 · Advanced Tooling</div>
+    <div class="nav-week-group">
+      <a class="nav-item" href="#w11" onclick="openWeek('w11')"><span class="nav-dot dot-m3"></span>Week 15 — Slither Static Analysis</a>
+      <a class="nav-item" href="#w12" onclick="openWeek('w12')"><span class="nav-dot dot-m3"></span>Weeks 16 — Echidna Fuzzing</a>
+      <a class="nav-item" href="#w13" onclick="openWeek('w13')"><span class="nav-dot dot-m3"></span>Week 17 — Invariant Testing</a>
+      <a class="nav-item" href="#w14" onclick="openWeek('w14')"><span class="nav-dot dot-m3"></span>Weeks 18–19 — Cyfrin Advanced + SWC</a>
+    </div>
+
+    <div class="nav-phase-header">Phase 4 · Real Audits</div>
+    <div class="nav-week-group">
+      <a class="nav-item" href="#w15" onclick="openWeek('w15')"><span class="nav-dot dot-m4"></span>Week 20 — Shadow Audit #1</a>
+      <a class="nav-item" href="#w16" onclick="openWeek('w16')"><span class="nav-dot dot-m4"></span>Weeks 21–22 — Shadow Audits #2–5</a>
+      <a class="nav-item" href="#w17" onclick="openWeek('w17')"><span class="nav-dot dot-m4"></span>Week 23 — First Live Contest</a>
+      <a class="nav-item" href="#w18" onclick="openWeek('w18')"><span class="nav-dot dot-m4"></span>Weeks 24–26 — Portfolio & Growth</a>
+    </div>
+
+    <div class="nav-phase-header">Reference</div>
+    <div class="nav-week-group">
+      <a class="nav-item" href="#vulns"><span class="nav-dot dot-m2"></span>Vulnerability Cheatsheet</a>
+      <a class="nav-item" href="#quickref"><span class="nav-dot dot-m1"></span>Master Resource Index</a>
+      <a class="nav-item" href="#compare"><span class="nav-dot dot-m3"></span>Web3 vs Web Pentest</a>
+    </div>
+  </div>
+</nav>
+
+<div id="main">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-title">Web3 Security Auditor <span>Roadmap</span></div>
+  <div class="topbar-badges">
+    <span class="tbadge tbadge-green">100% Free</span>
+    <span class="tbadge tbadge-cyan">8 Months</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-eyebrow">Smart Contract Security · Full Roadmap · Blindly Followable</div>
+  <h1 class="hero-title">From C & Reverse Eng<br>to <span>Web3 Security Auditor</span></h1>
+  <p class="hero-desc">A day-by-day, link-by-link, practice-by-practice guide designed for your background. Every day has one job. Open the file, find your day, execute. No decisions. No overwhelm. No excuses.</p>
+  <div class="hero-stats">
+    <div class="hstat"><span class="hstat-val green">8</span><span class="hstat-lbl">Months</span></div>
+    <div class="hstat"><span class="hstat-val cyan">190</span><span class="hstat-lbl">Guided Days</span></div>
+    <div class="hstat"><span class="hstat-val orange">100+</span><span class="hstat-lbl">Challenges</span></div>
+    <div class="hstat"><span class="hstat-val yellow">$50k+</span><span class="hstat-lbl">Bounty Potential</span></div>
+    <div class="hstat"><span class="hstat-val" style="color:var(--purple)">4hrs</span><span class="hstat-lbl">Daily Commitment</span></div>
+  </div>
+</div>
+
+<!-- GROUND RULES -->
+<div class="ground-rules" id="rules">
+  <div class="gr-header">Ground Rules — Read Once, Execute Always</div>
+  <div class="gr-grid">
+    <div class="gr-item">
+      <div class="gr-rule">4 HRS/DAY MINIMUM</div>
+      <div class="gr-desc">2 hours study + 2 hours hands-on practice. Your DSA study takes your remaining hours. Never sacrifice the 4 hrs. If you miss a day, redo it the next morning before moving forward.</div>
+    </div>
+    <div class="gr-item">
+      <div class="gr-rule">NO COPY-PASTE CODE EVER</div>
+      <div class="gr-desc">Every single line of Solidity you write must be typed manually. Your fingers need to learn this syntax as deeply as you learned C. Muscle memory in auditing is real — it's how you spot bugs fast.</div>
+    </div>
+    <div class="gr-item">
+      <div class="gr-rule">BUG JOURNAL — NON-NEGOTIABLE</div>
+      <div class="gr-desc">Keep a dedicated Notion or Obsidian file. After every vulnerability you study, write it in your own words with one example. This becomes your audit checklist by Month 4. Without it, you'll forget 70% of what you learn.</div>
+    </div>
+    <div class="gr-item">
+      <div class="gr-rule">45-MIN RULE FOR WARGAMES</div>
+      <div class="gr-desc">When you hit a wargame challenge, you must attempt it for at least 45 minutes before looking at any hints or writeups. The struggle is where learning happens. Instant hints = zero retention.</div>
+    </div>
+    <div class="gr-item">
+      <div class="gr-rule">DAILY TWITTER/X HABIT</div>
+      <div class="gr-desc">Follow: @PatrickAlphaC @pashovkrum @bytes032 @0xOwenThurm @HickupHH3 @trust__90 @0xJuancito. Read their posts during lunch. Free education from top auditors daily. Worth 30 min every single day.</div>
+    </div>
+    <div class="gr-item">
+      <div class="gr-rule">NO SKIPPING — NO SHORTCUTS</div>
+      <div class="gr-desc">Every phase gates the next. You cannot audit well without knowing opcodes. You cannot do wargames without knowing Solidity. Linear is the only path. Shortcuts create gaps that will cost you findings worth thousands of dollars.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER TABS -->
+<div class="filter-tabs">
+  <div class="ftab active" onclick="filterPhase('all', this)">All Phases</div>
+  <div class="ftab" onclick="filterPhase('p1', this)">Phase 1 · EVM</div>
+  <div class="ftab" onclick="filterPhase('p2', this)">Phase 2 · Wargames</div>
+  <div class="ftab" onclick="filterPhase('p3', this)">Phase 3 · Tooling</div>
+  <div class="ftab" onclick="filterPhase('p4', this)">Phase 4 · Audits</div>
+</div>
+
+<!-- ===== PHASE 1 ===== -->
+<div class="phase-section" data-phase="p1" id="phase1">
+  <div class="phase-header">
+    <div class="phase-num">01</div>
+    <div class="phase-info">
+      <div class="phase-tag tag-m1">Months 1–2 · Days 1–60</div>
+      <div class="phase-title">EVM Architecture & Solidity Deep Dive</div>
+      <div class="phase-subtitle">Foundation you can't skip · 4 weeks of pure building</div>
+    </div>
+  </div>
+  <div class="phase-goal">
+    <strong>Your goal for this phase:</strong> Understand the EVM like you understand x86. Read opcodes, storage layouts, and calldata encoding without a cheat sheet. Write and deploy contracts from scratch. By Day 60 you should be able to read any Solidity contract and trace exactly what happens in the EVM — storage slot by slot, opcode by opcode.
+  </div>
+
+  <!-- WEEK 1 -->
+  <div class="week-block" id="w1">
+    <div class="week-header" onclick="toggleWeek('w1')">
+      <span class="wk-num">WEEK 01</span>
+      <span class="wk-title">Blockchain & EVM Fundamentals — Days 1–7</span>
+      <span class="wk-meta">
+        <span class="wk-tag tag-m1">Foundation</span>
+        <span>7 days</span>
+      </span>
+      <span class="wk-chevron" id="cv-w1">▼</span>
+    </div>
+    <div class="week-body" id="wb-w1">
+
+      <!-- DAY 1 -->
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d1')">
+          <div class="day-num-badge badge-m1" id="b-d1">01</div>
+          <div class="day-info">
+            <div class="day-title">What is the EVM, Really?</div>
+            <div class="day-tags"><span class="dtag">Study</span><span class="dtag dtag-practice">First Contract</span><span class="dtag">Remix</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d1" onclick="markDone('d1', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d1">▼</span>
+        </div>
+        <div class="day-body" id="db-d1">
+          <div class="day-section">
+            <div class="ds-label ds-study">📺 Study — 2 Hours</div>
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <strong>Watch Patrick Collins' 32hr Course — first 2 hours only.</strong><br>
+                Open: <a href="https://www.youtube.com/watch?v=gyMwXuJrbJQ" target="_blank">youtube.com/watch?v=gyMwXuJrbJQ</a><br>
+                Watch from <strong>0:00 → 2:00:00</strong>. Stop exactly there. This covers blockchain fundamentals, what a transaction is, what "deploy" means, and why gas exists. Don't rush — absorb every concept.
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <strong>EVM Codes — First Look.</strong><br>
+                Open: <a href="https://evm.codes" target="_blank">evm.codes</a><br>
+                Read the "About EVM" intro section. Don't memorize opcodes yet — just understand the concept of a stack machine. Notice how every opcode costs gas. Bookmark this site. You'll live here in Week 4.
+              </div>
+            </div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">⚙️ Practice — 2 Hours</div>
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <strong>Open Remix IDE:</strong> <a href="https://remix.ethereum.org" target="_blank">remix.ethereum.org</a><br>
+                Create a new file called <code>HelloWorld.sol</code>. Type this manually — no copy-paste:
+              </div>
+            </div>
+            <div class="code-block">
+              <div class="code-header">HelloWorld.sol — Your First Contract</div>
+              <div class="code-body"><span class="c">// SPDX-License-Identifier: MIT</span>
+<span class="k">pragma</span> <span class="p">solidity</span> ^0.8.18;
+
+<span class="k">contract</span> <span class="t">HelloWorld</span> {
+    <span class="c">// This variable lives in storage — slot 0</span>
+    <span class="t">string</span> <span class="k">public</span> greet = <span class="s">"Hello, Web3 Auditor"</span>;
+
+    <span class="c">// msg.sender = whoever called this function</span>
+    <span class="k">address</span> <span class="k">public</span> lastCaller;
+    
+    <span class="k">function</span> <span class="f">setGreet</span>(<span class="t">string</span> <span class="k">memory</span> _greet) <span class="k">public</span> {
+        greet = _greet;
+        lastCaller = msg.sender;
+    }
+    
+    <span class="k">function</span> <span class="f">getGreet</span>() <span class="k">public</span> <span class="k">view</span> <span class="k">returns</span> (<span class="t">string</span> <span class="k">memory</span>) {
+        <span class="k">return</span> greet;
+    }
+}</div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                In Remix: Compile (Ctrl+S) → Deploy tab → Select "JavaScript VM" → Click Deploy.<br>
+                After deploying: Call <code>setGreet</code> with your name → Call <code>greet</code> to read it back → Check <code>lastCaller</code>.<br>
+                <strong>Observe:</strong> Every state-changing call creates a transaction. Every transaction costs gas. Reading data (view) is free.
+              </div>
+            </div>
+          </div>
+          <div class="checkpoint">Can you explain: (1) why deploying costs gas but reading doesn't? (2) what msg.sender contains? (3) what "storage slot 0" means? If yes → Day 2.</div>
+        </div>
+      </div>
+
+      <!-- DAY 2 -->
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d2')">
+          <div class="day-num-badge badge-m1" id="b-d2">02</div>
+          <div class="day-info">
+            <div class="day-title">Solidity Types, Storage & Memory — The Core Mental Model</div>
+            <div class="day-tags"><span class="dtag">Types</span><span class="dtag dtag-critical">Storage Layout</span><span class="dtag dtag-practice">Build</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d2" onclick="markDone('d2', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d2">▼</span>
+        </div>
+        <div class="day-body" id="db-d2">
+          <div class="day-section">
+            <div class="ds-label ds-study">📺 Study — 2 Hours</div>
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <strong>Patrick Collins video — continue from 2:00:00 to 4:00:00.</strong><br>
+                <a href="https://www.youtube.com/watch?v=gyMwXuJrbJQ&t=7200" target="_blank">youtube.com/watch?v=gyMwXuJrbJQ</a> (timestamps in URL)<br>
+                Topic: Variables, types, structs, arrays, mappings. Code every example as you watch.
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <strong>Read Solidity Docs — Types section.</strong><br>
+                <a href="https://docs.soliditylang.org/en/latest/types.html" target="_blank">docs.soliditylang.org/en/latest/types.html</a><br>
+                Focus on: Value types (uint, bool, address), Reference types (arrays, structs, mappings), Data locations (storage, memory, calldata). This page is dense — re-read any unclear section.
+              </div>
+            </div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">⚙️ Practice — 2 Hours</div>
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content">Build <code>SimpleStorage.sol</code> in Remix — your storage master contract:</div>
+            </div>
+            <div class="code-block">
+              <div class="code-header">SimpleStorage.sol</div>
+              <div class="code-body"><span class="c">// SPDX-License-Identifier: MIT</span>
+<span class="k">pragma</span> <span class="p">solidity</span> ^0.8.18;
+
+<span class="k">contract</span> <span class="t">SimpleStorage</span> {
+    <span class="c">// Storage slot 0 — costs 20,000 gas to write for first time</span>
+    <span class="t">uint256</span> <span class="k">public</span> favoriteNumber;
+    
+    <span class="c">// Structs pack data together</span>
+    <span class="k">struct</span> <span class="t">Person</span> {
+        <span class="t">string</span> name;          <span class="c">// dynamic — stored as hash</span>
+        <span class="t">uint256</span> favoriteNum;  <span class="c">// fixed — 32 bytes</span>
+    }
+    
+    <span class="c">// Dynamic array — length at slot, items at keccak256(slot)+i</span>
+    <span class="t">Person</span>[] <span class="k">public</span> people;
+    
+    <span class="c">// Mapping — items at keccak256(key . slot)</span>
+    <span class="k">mapping</span>(<span class="t">address</span> => <span class="t">uint256</span>) <span class="k">public</span> addrToNum;
+    <span class="k">mapping</span>(<span class="t">string</span> => <span class="t">uint256</span>) <span class="k">public</span> nameToNum;
+    
+    <span class="k">function</span> <span class="f">store</span>(<span class="t">uint256</span> _number) <span class="k">public</span> {
+        favoriteNumber = _number; <span class="c">// SSTORE — 5,000 gas (warm) or 20,000 (cold)</span>
+    }
+    
+    <span class="c">// 'view' means read-only — no gas when called externally</span>
+    <span class="k">function</span> <span class="f">retrieve</span>() <span class="k">public</span> <span class="k">view</span> <span class="k">returns</span> (<span class="t">uint256</span>) {
+        <span class="k">return</span> favoriteNumber; <span class="c">// SLOAD</span>
+    }
+    
+    <span class="c">// 'memory' = temporary, lives only during this function call</span>
+    <span class="k">function</span> <span class="f">addPerson</span>(<span class="t">string</span> <span class="k">memory</span> _name, <span class="t">uint256</span> _num) <span class="k">public</span> {
+        people.<span class="f">push</span>(<span class="t">Person</span>(_name, _num));
+        addrToNum[msg.sender] = _num;
+        nameToNum[_name] = _num;
+    }
+}</div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                Deploy and test every function. Add 5 people. Retrieve by index. Check mappings for your own address.<br>
+                Then: <strong>Change</strong> <code>memory</code> to <code>storage</code> in <code>addPerson</code> and try to compile. Read the error carefully.
+              </div>
+            </div>
+          </div>
+          <div class="bug-journal">What is the difference between storage, memory, and calldata? When does the EVM use SSTORE vs MSTORE? Why does storage cost more gas? Write this in plain English as if explaining to a friend who codes in C.</div>
+        </div>
+      </div>
+
+      <!-- DAY 3 -->
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d3')">
+          <div class="day-num-badge badge-m1" id="b-d3">03</div>
+          <div class="day-info">
+            <div class="day-title">Functions, Modifiers & The FundMe Contract</div>
+            <div class="day-tags"><span class="dtag">Functions</span><span class="dtag dtag-practice">FundMe Build</span><span class="dtag dtag-critical">Payable</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d3" onclick="markDone('d3', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d3">▼</span>
+        </div>
+        <div class="day-body" id="db-d3">
+          <div class="day-section">
+            <div class="ds-label ds-study">📺 Study — 2 Hours</div>
+            <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Patrick Collins — 4:00:00 → 6:00:00</strong><br><a href="https://www.youtube.com/watch?v=gyMwXuJrbJQ&t=14400" target="_blank">youtube.com/watch?v=gyMwXuJrbJQ</a><br>Topic: payable, msg.value, modifiers, require, constructor. These are the building blocks of every DeFi protocol you will audit.</div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Read: Solidity Docs — Contracts section</strong><br><a href="https://docs.soliditylang.org/en/latest/contracts.html#visibility-and-getters" target="_blank">docs.soliditylang.org — visibility and getters</a><br>Understand: public, private, internal, external — these are access control. Misusing them is one of the most common high-severity audit findings.</div></div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">⚙️ Practice — 2 Hours</div>
+            <div class="step"><div class="step-num">1</div><div class="step-content">Build the complete FundMe contract. This is a real-world pattern used in fundraising and crowdfunding dApps:</div></div>
+            <div class="code-block">
+              <div class="code-header">FundMe.sol — First Security-Relevant Contract</div>
+              <div class="code-body"><span class="c">// SPDX-License-Identifier: MIT</span>
+<span class="k">pragma</span> <span class="p">solidity</span> ^0.8.18;
+
+<span class="k">contract</span> <span class="t">FundMe</span> {
+    <span class="k">address</span> <span class="k">public</span> <span class="k">immutable</span> owner; <span class="c">// immutable = cheaper than storage</span>
+    <span class="k">mapping</span>(<span class="t">address</span> => <span class="t">uint256</span>) <span class="k">public</span> addressToAmount;
+    <span class="k">address</span>[] <span class="k">public</span> funders;
+    
+    <span class="k">constructor</span>() {
+        owner = msg.sender; <span class="c">// set at deploy time</span>
+    }
+    
+    <span class="c">// AUDIT POINT: this modifier pattern is used everywhere</span>
+    <span class="k">modifier</span> <span class="f">onlyOwner</span>() {
+        <span class="f">require</span>(msg.sender == owner, <span class="s">"FundMe: Not owner"</span>);
+        _; <span class="c">// rest of function executes here</span>
+    }
+    
+    <span class="c">// payable = can receive ETH</span>
+    <span class="k">function</span> <span class="f">fund</span>() <span class="k">public</span> <span class="k">payable</span> {
+        <span class="f">require</span>(msg.value > 0, <span class="s">"FundMe: Must send ETH"</span>);
+        addressToAmount[msg.sender] += msg.value;
+        funders.<span class="f">push</span>(msg.sender);
+    }
+    
+    <span class="k">function</span> <span class="f">withdraw</span>() <span class="k">public</span> <span class="f">onlyOwner</span> {
+        <span class="c">// Reset all funders</span>
+        <span class="k">for</span> (<span class="t">uint256</span> i = <span class="n">0</span>; i < funders.length; i++) {
+            addressToAmount[funders[i]] = <span class="n">0</span>;
+        }
+        funders = <span class="k">new</span> <span class="t">address</span>[](<span class="n">0</span>);
+        
+        <span class="c">// Best practice: use call() not transfer() or send()</span>
+        (<span class="t">bool</span> success, ) = <span class="k">payable</span>(owner).<span class="f">call</span>{value: <span class="k">address</span>(<span class="k">this</span>).balance}(<span class="s">""</span>);
+        <span class="f">require</span>(success, <span class="s">"FundMe: Transfer failed"</span>);
+    }
+    
+    <span class="k">receive</span>() <span class="k">external</span> <span class="k">payable</span> { <span class="f">fund</span>(); }
+    <span class="k">fallback</span>() <span class="k">external</span> <span class="k">payable</span> { <span class="f">fund</span>(); }
+}</div>
+            </div>
+            <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Test these scenarios in Remix:</strong><br>• Fund from 3 different accounts (switch accounts in Remix)<br>• Try to fund with 0 ETH — what happens?<br>• Try to withdraw from a non-owner account — what error appears?<br>• Withdraw from the owner account — verify the balance moved correctly</div></div>
+          </div>
+          <div class="bug-journal">Why does this contract use <code>call()</code> instead of <code>transfer()</code> for sending ETH? What is the difference? What vulnerability does using <code>transfer()</code> create? (Hint: look up "2300 gas stipend")</div>
+        </div>
+      </div>
+
+      <!-- DAY 4 -->
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d4')">
+          <div class="day-num-badge badge-m1" id="b-d4">04</div>
+          <div class="day-info">
+            <div class="day-title">EVM Opcodes & Storage Layout — Think Like the Machine</div>
+            <div class="day-tags"><span class="dtag dtag-critical">EVM Internals</span><span class="dtag">Opcodes</span><span class="dtag dtag-practice">Debugger</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d4" onclick="markDone('d4', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d4">▼</span>
+        </div>
+        <div class="day-body" id="db-d4">
+          <div class="day-section">
+            <div class="ds-label ds-study">📖 Study — 2 Hours</div>
+            <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Noxx EVM Deep Dive — Parts 1 & 2</strong><br><a href="https://noxx.substack.com/p/evm-deep-dives-the-path-to-shadowy" target="_blank">noxx.substack.com — EVM Deep Dives</a><br>This is the single best plain-English explanation of how the EVM actually works. Read both parts with full attention. Take notes on: stack, memory, storage, how function calls work.</div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Study these specific opcodes on evm.codes:</strong><br><a href="https://evm.codes" target="_blank">evm.codes</a><br>For each opcode, understand: what it does, how many stack inputs/outputs, gas cost.<br>Study: <code>PUSH1</code> <code>POP</code> <code>MLOAD</code> <code>MSTORE</code> <code>SLOAD</code> <code>SSTORE</code> <code>CALL</code> <code>DELEGATECALL</code> <code>STATICCALL</code> <code>CALLDATALOAD</code> <code>RETURN</code> <code>REVERT</code></div></div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">⚙️ Practice — 2 Hours</div>
+            <div class="step"><div class="step-num">1</div><div class="step-content">Deploy this contract and use Remix's debugger to trace the opcodes:</div></div>
+            <div class="code-block">
+              <div class="code-header">StorageLayout.sol — Slot Analysis</div>
+              <div class="code-body"><span class="k">pragma</span> <span class="p">solidity</span> ^0.8.18;
+
+<span class="k">contract</span> <span class="t">StorageLayout</span> {
+    <span class="t">uint256</span> <span class="k">public</span> a = <span class="n">1</span>;      <span class="c">// slot 0 — full 32 bytes</span>
+    <span class="t">uint256</span> <span class="k">public</span> b = <span class="n">2</span>;      <span class="c">// slot 1 — full 32 bytes</span>
+    <span class="k">address</span> <span class="k">public</span> c;           <span class="c">// slot 2 — 20 bytes (right-padded)</span>
+    <span class="t">uint128</span> <span class="k">public</span> d = <span class="n">10</span>;     <span class="c">// slot 3 — first 16 bytes</span>
+    <span class="t">uint128</span> <span class="k">public</span> e = <span class="n">20</span>;     <span class="c">// slot 3 — second 16 bytes (PACKED!)</span>
+    <span class="t">bool</span> <span class="k">public</span> f = <span class="k">true</span>;       <span class="c">// slot 4 — 1 byte</span>
+}</div>
+            </div>
+            <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Use Remix Debugger:</strong> Deploy → click on the deploy transaction in the terminal → click "Debug" → step through opcodes with arrow keys. Watch SSTORE execute for each variable. Verify slots 0–4 in the Storage panel.</div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Manually compute the storage slot for a mapping:</strong><br>If <code>mapping(address => uint256) public balances</code> is at slot 2, where is <code>balances[0xABC...]</code> stored? Answer: <code>keccak256(abi.encodePacked(address, slot))</code>. Look this up in the Solidity docs and verify it makes sense.</div></div>
+          </div>
+          <div class="bug-journal">What is "storage packing"? Why does packing two uint128 into one slot save gas? What is the security risk of relying on "private" variables? (Hint: private only means inaccessible to other contracts — not hidden on-chain)</div>
+        </div>
+      </div>
+
+      <!-- DAY 5 -->
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d5')">
+          <div class="day-num-badge badge-m1" id="b-d5">05</div>
+          <div class="day-info">
+            <div class="day-title">Inheritance, Interfaces & Delegatecall — Proxy Pattern Preview</div>
+            <div class="day-tags"><span class="dtag">Inheritance</span><span class="dtag dtag-critical">Delegatecall</span><span class="dtag dtag-practice">Proxy Build</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d5" onclick="markDone('d5', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d5">▼</span>
+        </div>
+        <div class="day-body" id="db-d5">
+          <div class="day-section">
+            <div class="ds-label ds-study">📺 Study — 2 Hours</div>
+            <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Patrick Collins — 6:00:00 → 8:00:00</strong><br><a href="https://www.youtube.com/watch?v=gyMwXuJrbJQ&t=21600" target="_blank">youtube.com/watch?v=gyMwXuJrbJQ</a><br>Topic: Inheritance, interfaces, abstract contracts, import statements</div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Watch: Delegatecall explained</strong><br><a href="https://www.youtube.com/watch?v=bdXJmWajZRY" target="_blank">youtube.com — "Delegate Call" by Smart Contract Programmer</a><br>This is one of the most critical concepts for auditing. Watch it twice if needed. Delegatecall is behind proxy patterns, storage collisions, and multiple top-10 DeFi hacks.</div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Read: Noxx EVM Deep Dive Part 3</strong><br><a href="https://noxx.substack.com/p/evm-deep-dives-the-path-to-shadowy-d6b" target="_blank">noxx.substack.com — Part 3: Delegatecall</a></div></div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">⚙️ Practice — 2 Hours</div>
+            <div class="step"><div class="step-num">1</div><div class="step-content">Build and test a minimal proxy pattern — the foundation of every upgradeable contract:</div></div>
+            <div class="code-block">
+              <div class="code-header">Proxy.sol — Storage Collision Demo</div>
+              <div class="code-body"><span class="c">// SPDX-License-Identifier: MIT</span>
+<span class="k">pragma</span> <span class="p">solidity</span> ^0.8.18;
+
+<span class="k">contract</span> <span class="t">Logic</span> {
+    <span class="t">uint256</span> <span class="k">public</span> value;  <span class="c">// slot 0 in Logic</span>
+    <span class="k">address</span> <span class="k">public</span> sender; <span class="c">// slot 1 in Logic</span>
+    
+    <span class="k">function</span> <span class="f">setValue</span>(<span class="t">uint256</span> _val) <span class="k">public</span> {
+        value = _val;          <span class="c">// writes to slot 0</span>
+        sender = msg.sender;   <span class="c">// writes to slot 1</span>
+    }
+}
+
+<span class="k">contract</span> <span class="t">Proxy</span> {
+    <span class="c">// CRITICAL: must match Logic's slot layout EXACTLY</span>
+    <span class="t">uint256</span> <span class="k">public</span> value;        <span class="c">// slot 0 — same as Logic.value</span>
+    <span class="k">address</span> <span class="k">public</span> sender;       <span class="c">// slot 1 — same as Logic.sender</span>
+    <span class="k">address</span> <span class="k">public</span> logicAddress; <span class="c">// slot 2 — proxy admin</span>
+    
+    <span class="k">constructor</span>(<span class="k">address</span> _logic) {
+        logicAddress = _logic;
+    }
+    
+    <span class="k">fallback</span>() <span class="k">external</span> <span class="k">payable</span> {
+        <span class="c">// delegatecall: run Logic's code BUT in THIS contract's storage</span>
+        (<span class="t">bool</span> success, ) = logicAddress.<span class="f">delegatecall</span>(msg.data);
+        <span class="f">require</span>(success, <span class="s">"delegatecall failed"</span>);
+    }
+}</div>
+            </div>
+            <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Test sequence:</strong><br>① Deploy Logic → copy its address<br>② Deploy Proxy with Logic's address<br>③ In Remix: at the contract selector, use Proxy's address but Logic's ABI (copy paste the setValue function interface)<br>④ Call setValue(42) on Proxy<br>⑤ Read <code>value</code> on Proxy — should be 42<br>⑥ Read <code>sender</code> on Proxy — should be YOUR address (not Logic's address!)<br>⑦ Read <code>value</code> on Logic — should be 0 (untouched!)</div></div>
+          </div>
+          <div class="bug-journal">In your own words: when you call a function on the Proxy with delegatecall, who is msg.sender? Whose storage gets modified? What happens if Logic has a variable at slot 0 but Proxy has a different variable at slot 0? This is called "storage collision" — it's a critical vulnerability class you'll exploit in Ethernaut.</div>
+        </div>
+      </div>
+
+      <!-- DAYS 6-7 condensed -->
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d6')">
+          <div class="day-num-badge badge-m1" id="b-d6">06</div>
+          <div class="day-info">
+            <div class="day-title">Events, Custom Errors, ABI Encoding & Function Selectors</div>
+            <div class="day-tags"><span class="dtag dtag-critical">ABI Encoding</span><span class="dtag">Events</span><span class="dtag dtag-practice">Selectors</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d6" onclick="markDone('d6', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d6">▼</span>
+        </div>
+        <div class="day-body" id="db-d6">
+          <div class="day-section">
+            <div class="ds-label ds-study">📺 Study — 2 Hours</div>
+            <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Patrick Collins — 8:00:00 → 10:00:00</strong><br><a href="https://www.youtube.com/watch?v=gyMwXuJrbJQ&t=28800" target="_blank">youtube.com/watch?v=gyMwXuJrbJQ</a></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Read: ABI Encoding Spec — Function Selector & Argument Encoding sections only</strong><br><a href="https://docs.soliditylang.org/en/latest/abi-spec.html" target="_blank">docs.soliditylang.org/en/latest/abi-spec.html</a><br>Understanding this lets you read raw transaction data — critical for analyzing exploits on Etherscan.</div></div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">⚙️ Practice — 2 Hours</div>
+            <div class="code-block">
+              <div class="code-header">Events and ABI Practice</div>
+              <div class="code-body"><span class="k">pragma</span> <span class="p">solidity</span> ^0.8.18;
+
+<span class="k">contract</span> <span class="t">EventsAndABI</span> {
+    <span class="c">// Custom errors (cheaper than string require)</span>
+    <span class="k">error</span> <span class="t">NotOwner</span>(<span class="k">address</span> caller, <span class="k">address</span> required);
+    <span class="k">error</span> <span class="t">InsufficientBalance</span>(<span class="t">uint256</span> requested, <span class="t">uint256</span> available);
+    
+    <span class="c">// 'indexed' topics = searchable in logs (max 3 per event)</span>
+    <span class="k">event</span> <span class="t">Transfer</span>(<span class="k">address</span> <span class="k">indexed</span> from, <span class="k">address</span> <span class="k">indexed</span> to, <span class="t">uint256</span> amount);
+    
+    <span class="k">address</span> <span class="k">public</span> owner;
+    <span class="k">mapping</span>(<span class="k">address</span> => <span class="t">uint256</span>) <span class="k">public</span> balances;
+    
+    <span class="k">constructor</span>() { owner = msg.sender; }
+    
+    <span class="k">function</span> <span class="f">deposit</span>() <span class="k">public</span> <span class="k">payable</span> {
+        balances[msg.sender] += msg.value;
+        <span class="k">emit</span> <span class="t">Transfer</span>(<span class="k">address</span>(<span class="n">0</span>), msg.sender, msg.value);
+    }
+    
+    <span class="k">function</span> <span class="f">transfer</span>(<span class="k">address</span> _to, <span class="t">uint256</span> _amount) <span class="k">public</span> {
+        <span class="k">if</span> (balances[msg.sender] < _amount)
+            <span class="k">revert</span> <span class="t">InsufficientBalance</span>(_amount, balances[msg.sender]);
+        balances[msg.sender] -= _amount;
+        balances[_to] += _amount;
+        <span class="k">emit</span> <span class="t">Transfer</span>(msg.sender, _to, _amount);
+    }
+    
+    <span class="c">// Compute any function's selector — critical for calldata analysis</span>
+    <span class="k">function</span> <span class="f">getSelector</span>(<span class="t">string</span> <span class="k">memory</span> _sig) <span class="k">public</span> <span class="k">pure</span> <span class="k">returns</span> (<span class="t">bytes4</span>) {
+        <span class="k">return</span> <span class="t">bytes4</span>(<span class="f">keccak256</span>(<span class="t">bytes</span>(_sig)));
+    }
+}</div>
+            </div>
+            <div class="step"><div class="step-num">1</div><div class="step-content">Call <code>getSelector("transfer(address,uint256)")</code> — it should return <code>0xa9059cbb</code>. This is the ERC20 transfer selector. Every Ethereum transaction starts with these 4 bytes if it's calling transfer.</div></div>
+          </div>
+          <div class="checkpoint">Can you decode the first 4 bytes of any transaction on Etherscan? Go to etherscan.io, find any recent ERC20 transfer transaction, and verify the function selector matches what you computed.</div>
+        </div>
+      </div>
+
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d7')">
+          <div class="day-num-badge badge-m1" id="b-d7">07</div>
+          <div class="day-info">
+            <div class="day-title">Review Day — CryptoZombies Lessons 1–2</div>
+            <div class="day-tags"><span class="dtag dtag-review">Review</span><span class="dtag">CryptoZombies</span><span class="dtag dtag-practice">Gamified</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d7" onclick="markDone('d7', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d7">▼</span>
+        </div>
+        <div class="day-body" id="db-d7">
+          <div class="day-section">
+            <div class="ds-label ds-practice">⚙️ Full Day Practice — 4 Hours</div>
+            <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Morning (2 hrs):</strong> Rebuild SimpleStorage + FundMe from memory. Open a blank Remix file. Type both contracts without looking at any previous code. If you get stuck on something → look it up → write it → then write it again.</div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Afternoon (2 hrs):</strong> Open CryptoZombies and complete Lessons 1 and 2.<br><a href="https://cryptozombies.io" target="_blank">cryptozombies.io</a><br>These gamified lessons solidify everything from this week interactively. Do not skip any chapter.</div></div>
+          </div>
+          <div class="checkpoint">Self-test before Day 8: Without looking at anything — (1) What are the 3 data locations? (2) What is storage slot 0? (3) What does `indexed` do in an event? (4) What is a function selector and how is it computed? (5) What does delegatecall do? All 5 correct → proceed to Week 2.</div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- end week 1 -->
+
+  <!-- WEEK 2 -->
+  <div class="week-block" id="w2">
+    <div class="week-header" onclick="toggleWeek('w2')">
+      <span class="wk-num">WEEK 02</span>
+      <span class="wk-title">Advanced Solidity — Standards, Patterns & Gas — Days 8–14</span>
+      <span class="wk-meta"><span class="wk-tag tag-m1">Advanced</span><span>7 days</span></span>
+      <span class="wk-chevron" id="cv-w2">▼</span>
+    </div>
+    <div class="week-body" id="wb-w2">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d8')">
+          <div class="day-num-badge badge-m1" id="b-d8">08</div>
+          <div class="day-info">
+            <div class="day-title">ERC20 — Build From Scratch Without OpenZeppelin</div>
+            <div class="day-tags"><span class="dtag dtag-critical">ERC20 Standard</span><span class="dtag dtag-practice">Full Build</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d8" onclick="markDone('d8', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d8">▼</span>
+        </div>
+        <div class="day-body" id="db-d8">
+          <div class="day-section">
+            <div class="ds-label ds-study">📖 Study — 2 Hours</div>
+            <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Read the EIP-20 specification completely</strong><br><a href="https://eips.ethereum.org/EIPS/eip-20" target="_blank">eips.ethereum.org/EIPS/eip-20</a><br>Read every function signature, every rule, every event. This is the contract for how every fungible token in Ethereum works. You need to know it as well as you know memcpy.</div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Read OpenZeppelin's ERC20 implementation</strong><br><a href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol" target="_blank">github.com/OpenZeppelin/openzeppelin-contracts — ERC20.sol</a><br>Read every line. Add a comment above each function explaining what it does and WHY it does it that way.</div></div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">⚙️ Practice — 2 Hours</div>
+            <div class="step"><div class="step-num">1</div><div class="step-content">Build your own ERC20 from scratch — no imports, no OZ:</div></div>
+            <div class="code-block">
+              <div class="code-header">MyToken.sol — Pure ERC20 Implementation</div>
+              <div class="code-body"><span class="k">pragma</span> <span class="p">solidity</span> ^0.8.18;
+
+<span class="k">contract</span> <span class="t">MyToken</span> {
+    <span class="t">string</span> <span class="k">public</span> name;
+    <span class="t">string</span> <span class="k">public</span> symbol;
+    <span class="t">uint8</span> <span class="k">public</span> decimals = <span class="n">18</span>;
+    <span class="t">uint256</span> <span class="k">public</span> totalSupply;
+    
+    <span class="k">mapping</span>(<span class="k">address</span> => <span class="t">uint256</span>) <span class="k">public</span> balanceOf;
+    <span class="k">mapping</span>(<span class="k">address</span> => <span class="k">mapping</span>(<span class="k">address</span> => <span class="t">uint256</span>)) <span class="k">public</span> allowance;
+    
+    <span class="k">event</span> <span class="t">Transfer</span>(<span class="k">address</span> <span class="k">indexed</span> from, <span class="k">address</span> <span class="k">indexed</span> to, <span class="t">uint256</span> value);
+    <span class="k">event</span> <span class="t">Approval</span>(<span class="k">address</span> <span class="k">indexed</span> owner, <span class="k">address</span> <span class="k">indexed</span> spender, <span class="t">uint256</span> value);
+    
+    <span class="k">constructor</span>(<span class="t">string</span> <span class="k">memory</span> _name, <span class="t">string</span> <span class="k">memory</span> _symbol, <span class="t">uint256</span> _supply) {
+        name = _name; symbol = _symbol;
+        totalSupply = _supply * <span class="n">10</span>**<span class="n">18</span>;
+        balanceOf[msg.sender] = totalSupply;
+        <span class="k">emit</span> <span class="t">Transfer</span>(<span class="k">address</span>(<span class="n">0</span>), msg.sender, totalSupply);
+    }
+    
+    <span class="k">function</span> <span class="f">transfer</span>(<span class="k">address</span> _to, <span class="t">uint256</span> _value) <span class="k">public</span> <span class="k">returns</span> (<span class="t">bool</span>) {
+        <span class="f">require</span>(balanceOf[msg.sender] >= _value, <span class="s">"Insufficient balance"</span>);
+        balanceOf[msg.sender] -= _value;
+        balanceOf[_to] += _value;
+        <span class="k">emit</span> <span class="t">Transfer</span>(msg.sender, _to, _value);
+        <span class="k">return</span> <span class="k">true</span>;
+    }
+    
+    <span class="k">function</span> <span class="f">approve</span>(<span class="k">address</span> _spender, <span class="t">uint256</span> _value) <span class="k">public</span> <span class="k">returns</span> (<span class="t">bool</span>) {
+        allowance[msg.sender][_spender] = _value;
+        <span class="k">emit</span> <span class="t">Approval</span>(msg.sender, _spender, _value);
+        <span class="k">return</span> <span class="k">true</span>;
+    }
+    
+    <span class="k">function</span> <span class="f">transferFrom</span>(<span class="k">address</span> _from, <span class="k">address</span> _to, <span class="t">uint256</span> _value) <span class="k">public</span> <span class="k">returns</span> (<span class="t">bool</span>) {
+        <span class="f">require</span>(balanceOf[_from] >= _value, <span class="s">"Insufficient balance"</span>);
+        <span class="f">require</span>(allowance[_from][msg.sender] >= _value, <span class="s">"Insufficient allowance"</span>);
+        balanceOf[_from] -= _value;
+        balanceOf[_to] += _value;
+        allowance[_from][msg.sender] -= _value;
+        <span class="k">emit</span> <span class="t">Transfer</span>(_from, _to, _value);
+        <span class="k">return</span> <span class="k">true</span>;
+    }
+}</div>
+            </div>
+          </div>
+          <div class="bug-journal">What is the ERC20 approval race condition? Look up "ERC20 approve frontrun attack". Why does USDC use increaseAllowance/decreaseAllowance instead of plain approve? This is a real vulnerability you'll see in audits.</div>
+        </div>
+      </div>
+
+      <!-- Days 9-14 abbreviated but present -->
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d9')">
+          <div class="day-num-badge badge-m1" id="b-d9">09–14</div>
+          <div class="day-info">
+            <div class="day-title">ERC721 NFTs · Assembly · Gas Optimization · DEX Mini-Project</div>
+            <div class="day-tags"><span class="dtag">ERC721</span><span class="dtag dtag-critical">Assembly</span><span class="dtag dtag-practice">DEX Build</span><span class="dtag">Gas</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d9" onclick="markDone('d9', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d9">▼</span>
+        </div>
+        <div class="day-body" id="db-d9">
+          <div class="day-section">
+            <div class="ds-label ds-study">📖 Days 9–14 Learning Plan</div>
+            <div class="step"><div class="step-num">Day 9</div><div class="step-content"><strong>ERC721 — Read EIP + Build from scratch</strong><br><a href="https://eips.ethereum.org/EIPS/eip-721" target="_blank">eips.ethereum.org/EIPS/eip-721</a> — read the spec<br><a href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol" target="_blank">OZ ERC721 implementation</a> — read every line<br>Build a minimal NFT contract with mint, transferFrom, approve, ownerOf. Focus on the approval logic — this is where most NFT bugs hide.</div></div>
+            <div class="step"><div class="step-num">Day 10</div><div class="step-content"><strong>Inline Assembly & Yul</strong><br><a href="https://docs.soliditylang.org/en/latest/assembly.html" target="_blank">docs.soliditylang.org/en/latest/assembly.html</a> — read entirely<br><a href="https://www.youtube.com/watch?v=r4yKide6gZo" target="_blank">youtube — "Yul / Inline Assembly" by Smart Contract Programmer</a><br>Practice: Write functions that read/write arbitrary storage slots with sload/sstore, get caller with caller(), send ETH with call().</div></div>
+            <div class="step"><div class="step-num">Day 11</div><div class="step-content"><strong>Gas Optimization Patterns</strong><br><a href="https://github.com/0xKitsune/solidity-gas-optimizations" target="_blank">github.com/0xKitsune/solidity-gas-optimizations</a> — entire README<br><a href="https://www.rareskills.io/post/gas-optimization" target="_blank">rareskills.io/post/gas-optimization</a><br>Practice: Write two versions of the same function — unoptimized and optimized. Compare gas in Remix. Understand: calldata vs memory, cache storage vars, unchecked math, packing.</div></div>
+            <div class="step"><div class="step-num">Days 12–13</div><div class="step-content"><strong>CryptoZombies Lessons 3–5</strong><br><a href="https://cryptozombies.io" target="_blank">cryptozombies.io</a><br>Complete Lessons 3 (Advanced Solidity), 4 (Battle System with payable), 5 (ERC721 & crypto-collectibles). These cover access control, payable patterns, and NFT standards in a gamified format.</div></div>
+            <div class="step"><div class="step-num">Day 14</div><div class="step-content"><strong>SOLO BUILD: Simple DEX — No guidance.</strong><br>Build a contract that: takes two ERC20 tokens, lets users add liquidity (deposit both), lets users swap Token A for Token B at 1:1, lets LPs withdraw their share. Spend 2 hours attempting it alone. If stuck: look at <a href="https://github.com/Uniswap/v1-contracts" target="_blank">Uniswap V1 (simplest DEX)</a> for inspiration only. Save this project — it's your baseline.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 3 - FOUNDRY -->
+  <div class="week-block" id="w3">
+    <div class="week-header" onclick="toggleWeek('w3')">
+      <span class="wk-num">WEEK 03</span>
+      <span class="wk-title">Foundry — Your Primary Audit Tool — Days 15–21</span>
+      <span class="wk-meta"><span class="wk-tag tag-m1">Tooling</span><span>7 days</span></span>
+      <span class="wk-chevron" id="cv-w3">▼</span>
+    </div>
+    <div class="week-body" id="wb-w3">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d15')">
+          <div class="day-num-badge badge-m1" id="b-d15">15–21</div>
+          <div class="day-info">
+            <div class="day-title">Foundry Setup → Unit Tests → Cheatcodes → Fuzzing → Invariants</div>
+            <div class="day-tags"><span class="dtag dtag-tool">Foundry</span><span class="dtag dtag-practice">Fuzz Testing</span><span class="dtag dtag-critical">Invariants</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d15" onclick="markDone('d15', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d15">▼</span>
+        </div>
+        <div class="day-body" id="db-d15">
+          <div class="day-section">
+            <div class="ds-label ds-study">📖 Week 3 Day-by-Day Plan</div>
+            <div class="step"><div class="step-num">Day 15</div><div class="step-content"><strong>Install Foundry & First Project</strong><br>Terminal: <code>curl -L https://foundry.paradigm.xyz | bash && foundryup</code><br>Read: <a href="https://book.getfoundry.sh/getting-started/installation" target="_blank">book.getfoundry.sh — Installation</a><br>Run: <code>forge init my-security-lab && cd my-security-lab && forge build</code><br>Move your FundMe contract into src/. Run forge test. Explore the project structure.</div></div>
+            <div class="step"><div class="step-num">Day 16</div><div class="step-content"><strong>Unit Tests with forge-std</strong><br>Read: <a href="https://book.getfoundry.sh/forge/tests" target="_blank">book.getfoundry.sh/forge/tests</a><br>Write full test suite for FundMe: testOwnerIsDeployer, testFundFailsWithZeroETH, testFundUpdatesFundersMapping, testOnlyOwnerCanWithdraw, testWithdrawMovesCorrectAmount. Run: <code>forge test -vvv</code></div></div>
+            <div class="step"><div class="step-num">Day 17</div><div class="step-content"><strong>Foundry Cheatcodes — Your Security Superpower</strong><br>Read ALL cheatcodes: <a href="https://book.getfoundry.sh/cheatcodes/" target="_blank">book.getfoundry.sh/cheatcodes</a><br>Master: vm.prank, vm.deal, vm.expectRevert, vm.warp, vm.roll, vm.store, vm.load, vm.startPrank, vm.stopPrank, vm.expectEmit, deal, hoax<br>Build a TimeLock contract and test it by warping time with vm.warp.</div></div>
+            <div class="step"><div class="step-num">Day 18</div><div class="step-content"><strong>Fork Testing — Test Against Real Mainnet State</strong><br>Read: <a href="https://book.getfoundry.sh/forge/fork-testing" target="_blank">book.getfoundry.sh/forge/fork-testing</a><br>Fork mainnet: <code>forge test --fork-url https://eth.llamarpc.com -vvv</code><br>Impersonate a whale address with vm.prank. Transfer real DAI in a test. This is how you test real protocol interactions.</div></div>
+            <div class="step"><div class="step-num">Day 19</div><div class="step-content"><strong>Fuzz Testing — Let the Machine Find Bugs</strong><br>Read: <a href="https://book.getfoundry.sh/forge/fuzz-testing" target="_blank">book.getfoundry.sh/forge/fuzz-testing</a><br>Write fuzz tests for your ERC20: testFuzz_TransferNeverExceedsBalance(uint256 amount), testFuzz_AddIsCommutative(uint256 a, uint256 b). Run: <code>forge test --fuzz-runs 10000</code></div></div>
+            <div class="step"><div class="step-num">Days 20–21</div><div class="step-content"><strong>Invariant Testing — The Gold Standard of Smart Contract Testing</strong><br>Read: <a href="https://book.getfoundry.sh/forge/invariant-testing" target="_blank">book.getfoundry.sh/forge/invariant-testing</a><br>Watch: <a href="https://www.youtube.com/watch?v=juyY-CTolac" target="_blank">Patrick Collins — Invariant Testing</a><br>Write invariant tests for your Bank contract: invariant_balanceEqualsTotal, invariant_noUserExceedsTotal. These tests let Foundry randomly call your contract thousands of times looking for broken invariants.</div></div>
+          </div>
+          <div class="bug-journal">What is the difference between fuzz testing and invariant testing? When would you use each? Give one example of a bug that fuzz testing would find but unit testing would miss.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 4 -->
+  <div class="week-block" id="w4">
+    <div class="week-header" onclick="toggleWeek('w4')">
+      <span class="wk-num">WEEK 04</span>
+      <span class="wk-title">Cyfrin Updraft Security Course Begins — Days 22–28</span>
+      <span class="wk-meta"><span class="wk-tag tag-m1">Structured Course</span><span>7 days</span></span>
+      <span class="wk-chevron" id="cv-w4">▼</span>
+    </div>
+    <div class="week-body" id="wb-w4">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d22')">
+          <div class="day-num-badge badge-m1" id="b-d22">22–28</div>
+          <div class="day-info">
+            <div class="day-title">Cyfrin Updraft — Smart Contract Security Modules 1–7</div>
+            <div class="day-tags"><span class="dtag dtag-critical">Security Concepts</span><span class="dtag">Cyfrin</span><span class="dtag dtag-practice">Code Along</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d22" onclick="markDone('d22', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d22">▼</span>
+        </div>
+        <div class="day-body" id="db-d22">
+          <div class="day-section">
+            <div class="ds-label ds-resource">🔗 Platform</div>
+            <div class="step"><div class="step-num">→</div><div class="step-content"><strong>Create a free account:</strong> <a href="https://updraft.cyfrin.io" target="_blank">updraft.cyfrin.io</a><br>Enroll in: "Smart Contract Security" course. This is free and taught by Patrick Collins — the gold standard for structured Web3 security learning.</div></div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-study">📺 Module Schedule</div>
+            <div class="step"><div class="step-num">Day 22</div><div class="step-content"><strong>Module 1: Introduction to Smart Contract Security + Audit Methodology</strong><br>What is an audit? What does a finding report look like? What's the difference between a security review and a full audit? What severity levels mean.</div></div>
+            <div class="step"><div class="step-num">Day 23</div><div class="step-content"><strong>Module 2: Your First Audit — Static Analysis with Slither</strong><br>Install Slither. Run it on a provided codebase. Understand what true positives vs false positives look like. Your first taste of automated tooling.</div></div>
+            <div class="step"><div class="step-num">Day 24</div><div class="step-content"><strong>Module 3: Re-entrancy Attacks — The King of All Vulnerabilities</strong><br>Single-function re-entrancy → cross-function → cross-contract → read-only re-entrancy. Code every variant. Exploit every variant. Fix every variant.</div></div>
+            <div class="step"><div class="step-num">Day 25</div><div class="step-content"><strong>Module 4: Weak Randomness + Access Control Failures</strong><br>Why block.timestamp and blockhash are not random. tx.origin vs msg.sender. Missing access control modifiers. Privilege escalation patterns.</div></div>
+            <div class="step"><div class="step-num">Day 26</div><div class="step-content"><strong>Module 5: Integer Overflow + Denial of Service</strong><br>Pre-0.8 Solidity overflow exploits. DoS via unbounded loops. DoS via ETH rejection. DoS via gas exhaustion. Real examples from history.</div></div>
+            <div class="step"><div class="step-num">Day 27</div><div class="step-content"><strong>Module 6: MEV, Front-Running & Transaction Ordering</strong><br>What is the mempool? How do bots watch it? Sandwich attacks. Slippage exploitation. Commit-reveal schemes as mitigation.</div></div>
+            <div class="step"><div class="step-num">Day 28</div><div class="step-content"><strong>Module 7: Signature Replay + Missing Validation</strong><br>ECDSA in Solidity. Missing nonce. Missing chain ID. Cross-contract replay. ecrecover vulnerabilities. Signed permit attacks.</div></div>
+          </div>
+          <div class="checkpoint">After Week 4: You understand 10+ vulnerability classes by code, exploit, and fix. You can run Slither on a contract and interpret results. You are ready for wargames.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end phase 1 -->
+
+<div class="phase-divider"></div>
+
+<!-- ===== PHASE 2 ===== -->
+<div class="phase-section" data-phase="p2" id="phase2">
+  <div class="phase-header">
+    <div class="phase-num">02</div>
+    <div class="phase-info">
+      <div class="phase-tag tag-m2">Months 3–5 · Days 29–150</div>
+      <div class="phase-title">Security Wargames & Core Vulnerabilities</div>
+      <div class="phase-subtitle">The heart of auditing — pattern match bugs on sight · 80+ challenges</div>
+    </div>
+  </div>
+  <div class="phase-goal">
+    <strong>Your goal for this phase:</strong> Solve 100+ wargame challenges across 3 platforms. Read 15 real post-mortems of DeFi hacks worth $100M+. Build your personal vulnerability pattern library. By Day 150 you should be able to look at a contract and identify the bug class within 5 minutes of reading.
+  </div>
+
+  <!-- WEEK 5 - SECUREUM -->
+  <div class="week-block" id="w5">
+    <div class="week-header" onclick="toggleWeek('w5')">
+      <span class="wk-num">WEEK 05</span>
+      <span class="wk-title">Secureum Bootcamp — Modules 1–6 — Days 29–35</span>
+      <span class="wk-meta"><span class="wk-tag tag-m2">Security Theory</span><span>7 days</span></span>
+      <span class="wk-chevron" id="cv-w5">▼</span>
+    </div>
+    <div class="week-body" id="wb-w5">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d29')">
+          <div class="day-num-badge badge-m2" id="b-d29">29–35</div>
+          <div class="day-info">
+            <div class="day-title">Secureum Epoch 0 — All 6 Modules + Quizzes</div>
+            <div class="day-tags"><span class="dtag dtag-critical">Quiz-Based</span><span class="dtag">Secureum</span><span class="dtag dtag-practice">Self-Test</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d29" onclick="markDone('d29', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d29">▼</span>
+        </div>
+        <div class="day-body" id="db-d29">
+          <div class="day-section">
+            <div class="ds-label ds-resource">🔗 Platform</div>
+            <div class="step"><div class="step-num">→</div><div class="step-content"><strong>Secureum Bootcamp:</strong> <a href="https://secureum.substack.com" target="_blank">secureum.substack.com</a><br>Secureum is the community gold standard for structured smart contract security education. The Epoch 0 materials are free and used by everyone from students to senior auditors as a reference.</div></div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-study">📖 Module Schedule — 1 per day</div>
+            <div class="step"><div class="step-num">Day 29</div><div class="step-content"><strong>Ethereum 101</strong> — EVM basics, accounts, transactions, gas. You know most of this — verify and fill gaps. Take the quiz — every wrong answer → bug journal entry.</div></div>
+            <div class="step"><div class="step-num">Day 30</div><div class="step-content"><strong>Solidity 101</strong> — Language basics from a security perspective. Even things you know will have security angles you haven't thought of yet.</div></div>
+            <div class="step"><div class="step-num">Day 31</div><div class="step-content"><strong>Solidity 201</strong> — Advanced patterns: assembly, try/catch, ABI encoding edge cases, hash collisions.</div></div>
+            <div class="step"><div class="step-num">Day 32</div><div class="step-content"><strong>Pitfalls 101</strong> — First half of the vulnerability bible. Read every pitfall. For each one, try to write a minimal proof-of-concept in Remix.</div></div>
+            <div class="step"><div class="step-num">Day 33</div><div class="step-content"><strong>Pitfalls 201</strong> — Advanced vulnerabilities including re-entrancy variants, oracle attacks, governance exploits.</div></div>
+            <div class="step"><div class="step-num">Day 34</div><div class="step-content"><strong>Audit Techniques 101</strong> — How professional auditors approach a codebase. Reading order, tooling sequence, documentation review, test coverage analysis.</div></div>
+            <div class="step"><div class="step-num">Day 35</div><div class="step-content"><strong>Quiz Day</strong> — Take all 6 module quizzes without looking at notes. Score yourself. Every wrong answer → reread that section → explain it to yourself out loud.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETHERNAUT -->
+  <div class="week-block" id="w6">
+    <div class="week-header" onclick="toggleWeek('w6')">
+      <span class="wk-num">WK 6–7</span>
+      <span class="wk-title">Ethernaut Wargame — Levels 0–14 — Days 36–50</span>
+      <span class="wk-meta"><span class="wk-tag tag-m2">Wargame</span><span>15 days</span></span>
+      <span class="wk-chevron" id="cv-w6">▼</span>
+    </div>
+    <div class="week-body" id="wb-w6">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d36')">
+          <div class="day-num-badge badge-m2" id="b-d36">36–50</div>
+          <div class="day-info">
+            <div class="day-title">Ethernaut — 30 Levels, 30 Exploits, 30 Writeups</div>
+            <div class="day-tags"><span class="dtag dtag-wargame">Ethernaut</span><span class="dtag dtag-critical">15 Vulns</span><span class="dtag dtag-practice">Foundry POCs</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d36" onclick="markDone('d36', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d36">▼</span>
+        </div>
+        <div class="day-body" id="db-d36">
+          <div class="day-section">
+            <div class="ds-label ds-resource">🔗 Platform</div>
+            <div class="step"><div class="step-num">→</div><div class="step-content"><strong>Ethernaut:</strong> <a href="https://ethernaut.openzeppelin.com" target="_blank">ethernaut.openzeppelin.com</a><br>The industry standard wargame. Created by OpenZeppelin. Every serious auditor has completed it. Rules: 45 min attempt before any hints. Write every exploit as a Foundry test. Write a 1-paragraph writeup per level.</div></div>
+            <div class="step"><div class="step-num">→</div><div class="step-content"><strong>Hints (ONLY after 45 min):</strong> <a href="https://github.com/ciaranmcveigh5/ethernaut" target="_blank">github.com/ciaranmcveigh5/ethernaut</a></div></div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">⚔️ Level Schedule</div>
+            <table class="vuln-table">
+              <tr><th>Day</th><th>Level</th><th>Vulnerability Class</th><th>Severity</th></tr>
+              <tr><td>36</td><td>0 — Hello Ethernaut</td><td>Warmup — console.log interaction</td><td class="sev-info">Info</td></tr>
+              <tr><td>37</td><td>1 — Fallback</td><td>Fallback function + ownership takeover</td><td class="sev-med">Medium</td></tr>
+              <tr><td>38</td><td>2 — Fal1out</td><td>Constructor name typo (historical bug)</td><td class="sev-high">High</td></tr>
+              <tr><td>39</td><td>3 — Coin Flip</td><td>Weak randomness — blockhash manipulation</td><td class="sev-high">High</td></tr>
+              <tr><td>40</td><td>4 — Telephone</td><td>tx.origin vs msg.sender confusion</td><td class="sev-high">High</td></tr>
+              <tr><td>41</td><td>5 — Token</td><td>Integer underflow (pre-Solidity 0.8)</td><td class="sev-high">High</td></tr>
+              <tr><td>42</td><td>6 — Delegation</td><td>Delegatecall function selector exploit</td><td class="sev-high">Critical</td></tr>
+              <tr><td>43</td><td>7 — Force</td><td>selfdestruct to force ETH into contract</td><td class="sev-med">Medium</td></tr>
+              <tr><td>44</td><td>8 — Vault</td><td>Private variables readable from storage</td><td class="sev-high">High</td></tr>
+              <tr><td>45</td><td>9 — King</td><td>DoS via ETH rejection in fallback</td><td class="sev-high">High</td></tr>
+              <tr><td>46</td><td>10 — Re-entrancy</td><td>Classic reentrancy — the DAO hack pattern</td><td class="sev-high">Critical</td></tr>
+              <tr><td>47</td><td>11 — Elevator</td><td>Interface manipulation — function side effects</td><td class="sev-med">Medium</td></tr>
+              <tr><td>48</td><td>12 — Privacy</td><td>Storage layout + slot reading attack</td><td class="sev-high">High</td></tr>
+              <tr><td>49</td><td>13 — Gatekeeper One</td><td>ABI encoding + gas manipulation</td><td class="sev-high">High</td></tr>
+              <tr><td>50</td><td>14 — Gatekeeper Two</td><td>extcodesize bypass in constructor</td><td class="sev-high">High</td></tr>
+            </table>
+          </div>
+          <div class="bug-journal">After each level: what was the root cause? What would have prevented it? What 1-line code fix resolves it? Build your pattern library entry by entry.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETHERNAUT CONT -->
+  <div class="week-block" id="w7">
+    <div class="week-header" onclick="toggleWeek('w7')">
+      <span class="wk-num">WK 7–8</span>
+      <span class="wk-title">Ethernaut — Levels 15–24 + Advanced Levels — Days 51–60</span>
+      <span class="wk-meta"><span class="wk-tag tag-m2">Wargame</span><span>10 days</span></span>
+      <span class="wk-chevron" id="cv-w7">▼</span>
+    </div>
+    <div class="week-body" id="wb-w7">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d51')">
+          <div class="day-num-badge badge-m2" id="b-d51">51–60</div>
+          <div class="day-info">
+            <div class="day-title">Ethernaut Advanced Levels — Storage Collisions, DEX Attacks, Proxy Hacks</div>
+            <div class="day-tags"><span class="dtag dtag-wargame">Advanced</span><span class="dtag dtag-critical">Proxy Attacks</span><span class="dtag dtag-practice">Foundry POCs</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d51" onclick="markDone('d51', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d51">▼</span>
+        </div>
+        <div class="day-body" id="db-d51">
+          <table class="vuln-table">
+            <tr><th>Day</th><th>Level</th><th>Vulnerability Class</th><th>Severity</th></tr>
+            <tr><td>51</td><td>15 — Naught Coin</td><td>ERC20 approval bypass — transferFrom not protected</td><td class="sev-high">High</td></tr>
+            <tr><td>52</td><td>16 — Preservation</td><td>Storage collision via delegatecall — library pattern abuse</td><td class="sev-high">Critical</td></tr>
+            <tr><td>53</td><td>17 — Recovery</td><td>Predicting contract address with CREATE opcode</td><td class="sev-med">Medium</td></tr>
+            <tr><td>54</td><td>18 — MagicNumber</td><td>Raw bytecode deployment — minimal proxy pattern</td><td class="sev-info">Advanced</td></tr>
+            <tr><td>55</td><td>19 — Alien Codex</td><td>Array length underflow → storage slot 0 overwrite</td><td class="sev-high">Critical</td></tr>
+            <tr><td>56</td><td>20 — Denial</td><td>Gas exhaustion DoS via infinite loop in fallback</td><td class="sev-high">High</td></tr>
+            <tr><td>57</td><td>21 — Shop</td><td>View function with side effects → price manipulation</td><td class="sev-med">Medium</td></tr>
+            <tr><td>58</td><td>22 — Dex</td><td>AMM price manipulation via controlled token</td><td class="sev-high">Critical</td></tr>
+            <tr><td>59</td><td>23 — Dex Two</td><td>ERC20 approval exploit on unvalidated token</td><td class="sev-high">Critical</td></tr>
+            <tr><td>60</td><td>24 — Puzzle Wallet</td><td>Storage collision in proxy + multicall deposit bug</td><td class="sev-high">Critical</td></tr>
+          </table>
+          <div class="checkpoint">Month 2 Gate: Have you solved all 25 Ethernaut levels and written a Foundry POC for each? Do you know 20+ vulnerability classes by name and exploit? → Proceed to Damn Vulnerable DeFi.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DVDeFi -->
+  <div class="week-block" id="w8">
+    <div class="week-header" onclick="toggleWeek('w8')">
+      <span class="wk-num">WK 9–11</span>
+      <span class="wk-title">Damn Vulnerable DeFi — All 18 Challenges — Days 61–98</span>
+      <span class="wk-meta"><span class="wk-tag tag-m2">DeFi Security</span><span>38 days</span></span>
+      <span class="wk-chevron" id="cv-w8">▼</span>
+    </div>
+    <div class="week-body" id="wb-w8">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d61')">
+          <div class="day-num-badge badge-m2" id="b-d61">61–98</div>
+          <div class="day-info">
+            <div class="day-title">DVDeFi — Flash Loans, Oracle Manipulation, Governance Attacks</div>
+            <div class="day-tags"><span class="dtag dtag-wargame">DVDeFi</span><span class="dtag dtag-critical">Flash Loans</span><span class="dtag dtag-practice">Real DeFi Patterns</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d61" onclick="markDone('d61', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d61">▼</span>
+        </div>
+        <div class="day-body" id="db-d61">
+          <div class="day-section">
+            <div class="ds-label ds-resource">🔗 Platform</div>
+            <div class="step"><div class="step-num">→</div><div class="step-content"><strong>Damn Vulnerable DeFi v4:</strong> <a href="https://damnvulnerabledefi.xyz" target="_blank">damnvulnerabledefi.xyz</a><br>The gold standard DeFi security wargame. 18 challenges covering every major DeFi attack vector. Harder than Ethernaut — expect each to take 4–8 hours. That is completely normal. The struggle is the learning.</div></div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">⚔️ Challenge Schedule — 2 days each</div>
+            <table class="vuln-table">
+              <tr><th>Days</th><th>Challenge</th><th>Core Vulnerability</th><th>Severity</th></tr>
+              <tr><td>61–62</td><td>Unstoppable</td><td>ERC20 balance vs internal accounting mismatch — DoS</td><td class="sev-high">High</td></tr>
+              <tr><td>63–64</td><td>Naive Receiver</td><td>msg.sender not validated — flash loan fee theft</td><td class="sev-high">High</td></tr>
+              <tr><td>65–66</td><td>Truster</td><td>Arbitrary external call in flash loan → approval exploit</td><td class="sev-high">Critical</td></tr>
+              <tr><td>67–68</td><td>Side Entrance</td><td>Flash loan deposit re-entrancy via fallback</td><td class="sev-high">Critical</td></tr>
+              <tr><td>69–70</td><td>The Rewarder</td><td>Flash loan + reward snapshot manipulation</td><td class="sev-high">Critical</td></tr>
+              <tr><td>71–72</td><td>Selfie</td><td>Governance token flash loan + delayed execution</td><td class="sev-high">Critical</td></tr>
+              <tr><td>73–75</td><td>Compromised</td><td>ECDSA private key recovery from hex-encoded data</td><td class="sev-high">Critical</td></tr>
+              <tr><td>76–77</td><td>Puppet</td><td>AMM spot price as oracle — price manipulation</td><td class="sev-high">Critical</td></tr>
+              <tr><td>78–79</td><td>Puppet V2</td><td>Uniswap V2 TWAP manipulation with large liquidity</td><td class="sev-high">Critical</td></tr>
+              <tr><td>80–81</td><td>Free Rider</td><td>NFT marketplace flash loan + payment logic bug</td><td class="sev-high">Critical</td></tr>
+              <tr><td>82–83</td><td>Backdoor</td><td>Gnosis Safe proxy setup + callback exploit</td><td class="sev-high">Critical</td></tr>
+              <tr><td>84–85</td><td>Climber</td><td>Timelock executes before validation check</td><td class="sev-high">Critical</td></tr>
+              <tr><td>86–87</td><td>Wallet Mining</td><td>Safe factory nonce prediction + signature reuse</td><td class="sev-high">Critical</td></tr>
+              <tr><td>88–89</td><td>ABI Smuggling</td><td>Selector collision via ABI encoding manipulation</td><td class="sev-high">Critical</td></tr>
+              <tr><td>90–98</td><td>Remaining + Review</td><td>Curvy Puppet, Shards, Withdrawal — advanced combinations</td><td class="sev-high">Critical</td></tr>
+            </table>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-resource">📚 After Every Challenge</div>
+            <div class="step"><div class="step-num">1</div><div class="step-content">Read the DeFiHackLabs POC for the same attack pattern: <a href="https://github.com/SunWeb3Sec/DeFiHackLabs" target="_blank">github.com/SunWeb3Sec/DeFiHackLabs</a></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-content">Search for community writeups: "[Challenge Name] Damn Vulnerable DeFi writeup" on Google/GitHub</div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-content">Add to your pattern library: root cause → impact → fix → real-world equivalent</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POSTMORTEMS -->
+  <div class="week-block" id="w9">
+    <div class="week-header" onclick="toggleWeek('w9')">
+      <span class="wk-num">WK 12–13</span>
+      <span class="wk-title">Real Hack Post-Mortems — $1B+ in Exploits Studied — Days 99–112</span>
+      <span class="wk-meta"><span class="wk-tag tag-m2">Real Hacks</span><span>14 days</span></span>
+      <span class="wk-chevron" id="cv-w9">▼</span>
+    </div>
+    <div class="week-body" id="wb-w9">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d99')">
+          <div class="day-num-badge badge-m2" id="b-d99">99–112</div>
+          <div class="day-info">
+            <div class="day-title">13 Real DeFi Hacks — From Rekt News to Foundry POC</div>
+            <div class="day-tags"><span class="dtag dtag-critical">Real Hacks</span><span class="dtag">Rekt.news</span><span class="dtag dtag-practice">POC Recreation</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d99" onclick="markDone('d99', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d99">▼</span>
+        </div>
+        <div class="day-body" id="db-d99">
+          <div class="day-section">
+            <div class="ds-label ds-resource">🔗 Sources</div>
+            <div class="step"><div class="step-num">→</div><div class="step-content"><strong>Rekt News:</strong> <a href="https://rekt.news" target="_blank">rekt.news</a> — Post-mortem articles for every major hack</div></div>
+            <div class="step"><div class="step-num">→</div><div class="step-content"><strong>DeFiHackLabs POCs:</strong> <a href="https://github.com/SunWeb3Sec/DeFiHackLabs" target="_blank">github.com/SunWeb3Sec/DeFiHackLabs</a> — 140+ Foundry POC replications</div></div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">📖 Hack Study Schedule</div>
+            <table class="vuln-table">
+              <tr><th>Day</th><th>Hack</th><th>Amount Stolen</th><th>Root Cause</th></tr>
+              <tr><td>99</td><td>Poly Network (2021)</td><td class="sev-high">$611M</td><td>Cross-chain calldata verification bypass</td></tr>
+              <tr><td>100</td><td>Wormhole (2022)</td><td class="sev-high">$325M</td><td>Signature verification bypass — fake guardian set</td></tr>
+              <tr><td>101</td><td>Ronin Bridge (2022)</td><td class="sev-high">$625M</td><td>Validator key compromise — 5 of 9 validators owned</td></tr>
+              <tr><td>102</td><td>Beanstalk (2022)</td><td class="sev-high">$182M</td><td>Flash loan governance attack — immediate vote + execute</td></tr>
+              <tr><td>103</td><td>Mango Markets (2022)</td><td class="sev-high">$114M</td><td>Self-manipulation of price oracle to inflate collateral</td></tr>
+              <tr><td>104</td><td>Euler Finance (2023)</td><td class="sev-high">$197M</td><td>Donation attack + violating health factor checks</td></tr>
+              <tr><td>105</td><td>Nomad Bridge (2022)</td><td class="sev-high">$190M</td><td>Merkle root initialized to zero — anyone could prove anything</td></tr>
+              <tr><td>106</td><td>Cream Finance (2021)</td><td class="sev-high">$130M</td><td>Flash loan + price oracle manipulation</td></tr>
+              <tr><td>107</td><td>Harvest Finance (2020)</td><td class="sev-high">$34M</td><td>Spot price oracle manipulation via Curve pool</td></tr>
+              <tr><td>108</td><td>Alpha Homora (2021)</td><td class="sev-high">$37M</td><td>Flash loan + re-entrancy on HomoraBank</td></tr>
+              <tr><td>109</td><td>BadgerDAO (2021)</td><td class="sev-high">$120M</td><td>Frontend injection — malicious token approvals via Cloudflare</td></tr>
+              <tr><td>110</td><td>Wintermute (2022)</td><td class="sev-high">$160M</td><td>Profanity vanity address brute-force — private key recovered</td></tr>
+              <tr><td>111</td><td>Reentrancy: The DAO (2016)</td><td class="sev-high">$60M</td><td>The original — single re-entrancy, led to Ethereum fork</td></tr>
+              <tr><td>112</td><td>Review all 13 — write summary</td><td>—</td><td>Categorize by: oracle / bridge / governance / reentrancy / key compromise</td></tr>
+            </table>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">⚙️ For Each Hack — 4-Step Process</div>
+            <div class="step"><div class="step-num">1</div><div class="step-content">Read the Rekt.news article fully. Understand the protocol, the attacker's motive, the sequence of transactions.</div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-content">Find and read the Foundry POC in DeFiHackLabs. Run it locally with <code>forge test --fork-url https://eth.llamarpc.com -vvv</code></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-content">Read the original protocol code. Find the exact vulnerable line. Mark it in your bug journal.</div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-content">Write the fix. One sentence: "The bug was X. The fix is Y. In audits, look for Z pattern."</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAPTURE THE ETHER -->
+  <div class="week-block" id="w10">
+    <div class="week-header" onclick="toggleWeek('w10')">
+      <span class="wk-num">WEEK 14</span>
+      <span class="wk-title">Capture The Ether + SWC Registry — Days 113–120</span>
+      <span class="wk-meta"><span class="wk-tag tag-m2">Wargame</span><span>8 days</span></span>
+      <span class="wk-chevron" id="cv-w10">▼</span>
+    </div>
+    <div class="week-body" id="wb-w10">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d113')">
+          <div class="day-num-badge badge-m2" id="b-d113">113–120</div>
+          <div class="day-info">
+            <div class="day-title">Capture The Ether + SWC Registry — Build Your Audit Checklist</div>
+            <div class="day-tags"><span class="dtag dtag-wargame">CTE</span><span class="dtag dtag-critical">SWC Registry</span><span class="dtag">Checklist</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d113" onclick="markDone('d113', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d113">▼</span>
+        </div>
+        <div class="day-body" id="db-d113">
+          <div class="day-section">
+            <div class="ds-label ds-resource">🔗 Platforms</div>
+            <div class="step"><div class="step-num">→</div><div class="step-content"><strong>Capture The Ether:</strong> <a href="https://capturetheether.com" target="_blank">capturetheether.com</a> — Classic wargame. Warmup, Lotteries, Math, Accounts sections.</div></div>
+            <div class="step"><div class="step-num">→</div><div class="step-content"><strong>SWC Registry:</strong> <a href="https://swcregistry.io" target="_blank">swcregistry.io</a> — Smart Contract Weakness Classification. Read every entry. This is the official vulnerability taxonomy auditors use.</div></div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">📅 Day Plan</div>
+            <div class="step"><div class="step-num">Days 113–117</div><div class="step-content">Complete all CTE challenges. Warmup section → Lotteries → Math section → Accounts section. Write exploits as Foundry tests.</div></div>
+            <div class="step"><div class="step-num">Days 118–119</div><div class="step-content">Read every SWC entry at swcregistry.io. For each one: 1 bug journal entry. Focus on the code examples — they show the exact pattern to look for.</div></div>
+            <div class="step"><div class="step-num">Day 120</div><div class="step-content"><strong>Build Your Master Audit Checklist.</strong> Combine everything from your bug journal into a structured checklist organized by category: Access Control, Reentrancy, Integer Math, Oracle, Randomness, Gas, Proxy. This file is your most valuable artifact — you'll use it on every audit for the rest of your career.</div></div>
+          </div>
+          <div class="checkpoint">Phase 2 Gate: Have you solved 80+ wargame challenges? Do you have a written bug journal with 30+ vulnerability patterns? Do you have a personal audit checklist? Can you identify a bug class within 5 minutes of reading a contract? → Proceed to Phase 3.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end phase 2 -->
+
+<div class="phase-divider"></div>
+
+<!-- ===== PHASE 3 ===== -->
+<div class="phase-section" data-phase="p3" id="phase3">
+  <div class="phase-header">
+    <div class="phase-num">03</div>
+    <div class="phase-info">
+      <div class="phase-tag tag-m3">Months 6–7 · Days 121–180</div>
+      <div class="phase-title">Advanced Tooling — Slither · Echidna · Formal Verification</div>
+      <div class="phase-subtitle">Automate 30% of your audit work · Find bugs machines find first</div>
+    </div>
+  </div>
+  <div class="phase-goal">
+    <strong>Your goal for this phase:</strong> Run Slither and Echidna on real open-source protocols and produce meaningful finding reports. Write invariant test suites that catch logic bugs automatically. Build your personal audit toolkit GitHub repo. By Day 180 you can do automated analysis on a new codebase in under 2 hours.
+  </div>
+
+  <div class="week-block" id="w11">
+    <div class="week-header" onclick="toggleWeek('w11')">
+      <span class="wk-num">WEEK 15</span>
+      <span class="wk-title">Slither Static Analysis — Days 121–133</span>
+      <span class="wk-meta"><span class="wk-tag tag-m3">Static Analysis</span><span>13 days</span></span>
+      <span class="wk-chevron" id="cv-w11">▼</span>
+    </div>
+    <div class="week-body" id="wb-w11">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d121')">
+          <div class="day-num-badge badge-m3" id="b-d121">121–133</div>
+          <div class="day-info">
+            <div class="day-title">Slither — Install → Learn → Apply to Real Protocols</div>
+            <div class="day-tags"><span class="dtag dtag-tool">Slither</span><span class="dtag dtag-practice">6 Protocols</span><span class="dtag">Custom Detectors</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d121" onclick="markDone('d121', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d121">▼</span>
+        </div>
+        <div class="day-body" id="db-d121">
+          <div class="day-section">
+            <div class="ds-label ds-study">📖 Installation & Learning</div>
+            <div class="step"><div class="step-num">Day 121</div><div class="step-content"><strong>Install Slither:</strong> <code>pip install slither-analyzer --break-system-packages</code><br>Read: <a href="https://github.com/crytic/slither" target="_blank">github.com/crytic/slither</a> — entire README<br>Detector reference: <a href="https://github.com/crytic/slither/wiki/Detector-Documentation" target="_blank">github.com/crytic/slither/wiki/Detector-Documentation</a> — bookmark and read all detectors<br>Run on your FundMe: <code>slither src/FundMe.sol --detect all 2>&1 | tee report.txt</code></div></div>
+            <div class="step"><div class="step-num">Days 122–127</div><div class="step-content"><strong>Run Slither on 6 real open-source protocols — one per day:</strong><br>• Day 122: Compound V2 — <a href="https://github.com/compound-finance/compound-protocol" target="_blank">github.com/compound-finance/compound-protocol</a><br>• Day 123: Uniswap V2 Core — <a href="https://github.com/Uniswap/v2-core" target="_blank">github.com/Uniswap/v2-core</a><br>• Day 124: Aave V2 — <a href="https://github.com/aave/protocol-v2" target="_blank">github.com/aave/protocol-v2</a><br>• Day 125: OpenZeppelin — <a href="https://github.com/OpenZeppelin/openzeppelin-contracts" target="_blank">github.com/OpenZeppelin/openzeppelin-contracts</a><br>• Day 126: Curve Finance — <a href="https://github.com/curvefi/curve-contract" target="_blank">github.com/curvefi/curve-contract</a><br>• Day 127: Morpho — <a href="https://github.com/morpho-org/morpho-blue" target="_blank">github.com/morpho-org/morpho-blue</a><br>For each: classify every finding as real bug, false positive, or informational.</div></div>
+            <div class="step"><div class="step-num">Days 128–130</div><div class="step-content"><strong>Trail of Bits: Building Secure Contracts</strong><br><a href="https://github.com/crytic/building-secure-contracts" target="_blank">github.com/crytic/building-secure-contracts</a><br>Complete the Slither section: filtering results, understanding detectors, triage methodology.</div></div>
+            <div class="step"><div class="step-num">Days 131–133</div><div class="step-content"><strong>Write Your First Custom Slither Detector</strong><br><a href="https://github.com/crytic/slither/wiki/How-to-write-a-detector" target="_blank">github.com/crytic/slither/wiki/How-to-write-a-detector</a><br>Build a detector that finds: contracts where a public function writes to storage without an access control modifier. This is a real bug class. Save it in your toolkit repo.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="week-block" id="w12">
+    <div class="week-header" onclick="toggleWeek('w12')">
+      <span class="wk-num">WEEK 16</span>
+      <span class="wk-title">Echidna Fuzzing — Days 134–147</span>
+      <span class="wk-meta"><span class="wk-tag tag-m3">Property Fuzzer</span><span>14 days</span></span>
+      <span class="wk-chevron" id="cv-w12">▼</span>
+    </div>
+    <div class="week-body" id="wb-w12">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d134')">
+          <div class="day-num-badge badge-m3" id="b-d134">134–147</div>
+          <div class="day-info">
+            <div class="day-title">Echidna — Property-Based Fuzzing for DeFi Protocols</div>
+            <div class="day-tags"><span class="dtag dtag-tool">Echidna</span><span class="dtag dtag-practice">ERC20 Properties</span><span class="dtag dtag-critical">Invariants</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d134" onclick="markDone('d134', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d134">▼</span>
+        </div>
+        <div class="day-body" id="db-d134">
+          <div class="day-section">
+            <div class="ds-label ds-study">📖 Learning Path</div>
+            <div class="step"><div class="step-num">Day 134</div><div class="step-content"><strong>Install Echidna:</strong><br><code>docker pull ghcr.io/crytic/echidna/echidna</code> (easiest) or download from <a href="https://github.com/crytic/echidna/releases" target="_blank">github.com/crytic/echidna/releases</a><br>Read the README. Understand how it differs from Foundry fuzzing: Echidna is stateful (it remembers previous calls), Foundry fuzz is stateless per test.</div></div>
+            <div class="step"><div class="step-num">Days 135–140</div><div class="step-content"><strong>Complete all Building Secure Contracts Echidna tutorials in order:</strong><br><a href="https://github.com/crytic/building-secure-contracts/tree/master/program-analysis/echidna" target="_blank">github.com/crytic/building-secure-contracts/tree/master/program-analysis/echidna</a><br>Tutorial 1: Basic properties → Tutorial 2: Collecting corpus → Tutorial 3: Filtering → Tutorial 4: Reproducing → Tutorial 5: ERC20 properties → Tutorial 6: Writing tests for complex systems. Do every tutorial in order, code everything yourself.</div></div>
+            <div class="step"><div class="step-num">Days 141–147</div><div class="step-content"><strong>Cyfrin Updraft — Advanced Foundry Course (remaining modules)</strong><br><a href="https://updraft.cyfrin.io" target="_blank">updraft.cyfrin.io</a><br>Complete: Advanced fuzz testing, formal verification intro, audit report writing, real audit walkthroughs (Boss Bridge, TSwap, Thunderloan). These are guided full audits with Patrick Collins. Code your own report before seeing his.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="week-block" id="w13">
+    <div class="week-header" onclick="toggleWeek('w13')">
+      <span class="wk-num">WEEK 17</span>
+      <span class="wk-title">Foundry Invariant Testing Advanced — Days 148–161</span>
+      <span class="wk-meta"><span class="wk-tag tag-m3">Invariants</span><span>14 days</span></span>
+      <span class="wk-chevron" id="cv-w13">▼</span>
+    </div>
+    <div class="week-body" id="wb-w13">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d148')">
+          <div class="day-num-badge badge-m3" id="b-d148">148–161</div>
+          <div class="day-info">
+            <div class="day-title">Write Invariant Test Suites for 7 Protocols</div>
+            <div class="day-tags"><span class="dtag dtag-tool">Foundry</span><span class="dtag dtag-critical">Invariants</span><span class="dtag dtag-practice">Protocol Testing</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d148" onclick="markDone('d148', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d148">▼</span>
+        </div>
+        <div class="day-body" id="db-d148">
+          <div class="day-section">
+            <div class="ds-label ds-study">📖 Study First</div>
+            <div class="step"><div class="step-num">→</div><div class="step-content">Read: <a href="https://book.getfoundry.sh/forge/invariant-testing" target="_blank">book.getfoundry.sh/forge/invariant-testing</a> — reread with full attention now that you understand more<br>Watch: <a href="https://www.youtube.com/watch?v=juyY-CTolac" target="_blank">Patrick Collins — Invariant Testing deep dive</a></div></div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">⚙️ Write Invariants for These Protocols (2 days each)</div>
+            <table class="vuln-table">
+              <tr><th>Days</th><th>Protocol</th><th>Key Invariant to Prove</th></tr>
+              <tr><td>148–149</td><td>Your Bank contract</td><td>address(this).balance == totalDeposited at all times</td></tr>
+              <tr><td>150–151</td><td>Your ERC20</td><td>sum(all balances) == totalSupply always</td></tr>
+              <tr><td>152–153</td><td>Your FundMe</td><td>Only owner can drain — balance only decreases via withdraw()</td></tr>
+              <tr><td>154–155</td><td>Your DEX</td><td>x * y == k (constant product) never decreases from swaps</td></tr>
+              <tr><td>156–157</td><td>WETH (write a mock)</td><td>totalSupply == sum of deposits minus withdrawals exactly</td></tr>
+              <tr><td>158–159</td><td>Your NFT</td><td>ownerOf[id] is never address(0) after mint, tokenId never reused</td></tr>
+              <tr><td>160–161</td><td>Review + document</td><td>Write a README explaining your invariant testing methodology</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="week-block" id="w14">
+    <div class="week-header" onclick="toggleWeek('w14')">
+      <span class="wk-num">WK 18–19</span>
+      <span class="wk-title">Cyfrin Advanced Course + Build Your Audit Toolkit — Days 162–180</span>
+      <span class="wk-meta"><span class="wk-tag tag-m3">Toolkit Build</span><span>19 days</span></span>
+      <span class="wk-chevron" id="cv-w14">▼</span>
+    </div>
+    <div class="week-body" id="wb-w14">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d162')">
+          <div class="day-num-badge badge-m3" id="b-d162">162–180</div>
+          <div class="day-info">
+            <div class="day-title">Complete Cyfrin Audits + Build Your Toolkit Repo</div>
+            <div class="day-tags"><span class="dtag dtag-tool">Toolkit</span><span class="dtag">Cyfrin</span><span class="dtag dtag-critical">Portfolio</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d162" onclick="markDone('d162', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d162">▼</span>
+        </div>
+        <div class="day-body" id="db-d162">
+          <div class="day-section">
+            <div class="ds-label ds-practice">📅 Day Plan</div>
+            <div class="step"><div class="step-num">Days 162–171</div><div class="step-content"><strong>Cyfrin Updraft — Complete all 3 guided real audits</strong><br>Boss Bridge audit → TSwap audit → Thunderloan audit. For each: audit the code yourself for 2 days → compare with Patrick's findings → study every finding you missed → write it in bug journal.</div></div>
+            <div class="step"><div class="step-num">Days 172–180</div><div class="step-content"><strong>Build Your Audit Toolkit Repo on GitHub</strong><br>Create: <code>github.com/[yourname]/web3-security-toolkit</code><br>Include: Your master audit checklist (categorized by vuln class), Your Slither custom detector, Your Echidna property templates for ERC20/ERC721/DEX, Your invariant test templates, Your report writing template, Links to all your shadow audits</div></div>
+          </div>
+          <div class="checkpoint">Phase 3 Gate: Can you spin up a fork of any protocol, run Slither + Echidna + Foundry invariant tests, and produce a preliminary finding report — all in under 3 hours? If yes → Phase 4.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end phase 3 -->
+
+<div class="phase-divider"></div>
+
+<!-- ===== PHASE 4 ===== -->
+<div class="phase-section" data-phase="p4" id="phase4">
+  <div class="phase-header">
+    <div class="phase-num">04</div>
+    <div class="phase-info">
+      <div class="phase-tag tag-m4">Month 8 · Days 181–240</div>
+      <div class="phase-title">Shadow Auditing & Real-World Contests</div>
+      <div class="phase-subtitle">Where money is made · Portfolio is built · Career starts</div>
+    </div>
+  </div>
+  <div class="phase-goal">
+    <strong>Your goal for this phase:</strong> Complete 5 shadow audits. Submit findings in 3 live contests. Build a public GitHub portfolio. Make your first bounty payout — even $50 counts. By Day 240 you have a track record, a toolkit, and a portfolio that can get you hired or land you independent clients.
+  </div>
+
+  <div class="week-block" id="w15">
+    <div class="week-header" onclick="toggleWeek('w15')">
+      <span class="wk-num">WEEK 20</span>
+      <span class="wk-title">Shadow Audit #1 — Full Process — Days 181–188</span>
+      <span class="wk-meta"><span class="wk-tag tag-m4">Shadow Audit</span><span>8 days</span></span>
+      <span class="wk-chevron" id="cv-w15">▼</span>
+    </div>
+    <div class="week-body" id="wb-w15">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d181')">
+          <div class="day-num-badge badge-m4" id="b-d181">181–188</div>
+          <div class="day-info">
+            <div class="day-title">Shadow Audit Process — Read → Analyze → Report → Compare → Learn</div>
+            <div class="day-tags"><span class="dtag dtag-critical">Shadow Audit</span><span class="dtag">Code4rena</span><span class="dtag dtag-practice">Report Writing</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d181" onclick="markDone('d181', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d181">▼</span>
+        </div>
+        <div class="day-body" id="db-d181">
+          <div class="day-section">
+            <div class="ds-label ds-resource">🔗 Where to find shadow audit targets</div>
+            <div class="step"><div class="step-num">→</div><div class="step-content"><strong>Code4rena Reports:</strong> <a href="https://code4rena.com/reports" target="_blank">code4rena.com/reports</a> — filter by: completed contests, under 800 lines of code, has published High/Critical findings. Start with smaller codebases.</div></div>
+            <div class="step"><div class="step-num">→</div><div class="step-content"><strong>Solodit:</strong> <a href="https://solodit.xyz" target="_blank">solodit.xyz</a> — aggregate of all contest findings. Use to find protocols with interesting bug patterns.</div></div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">📅 The 8-Day Shadow Audit Protocol</div>
+            <div class="step"><div class="step-num">Day 181</div><div class="step-content"><strong>Architecture Review (4 hrs):</strong> Clone the repo. Read all Solidity files top to bottom. Draw the architecture: which contracts call which. Identify the entry points. Understand the protocol's purpose.</div></div>
+            <div class="step"><div class="step-num">Day 182</div><div class="step-content"><strong>Automated Analysis (4 hrs):</strong> Run Slither. Run your checklist. Triage Slither output — classify every finding. Note suspicious areas for manual review.</div></div>
+            <div class="step"><div class="step-num">Day 183</div><div class="step-content"><strong>Manual Review — Access Control (4 hrs):</strong> Go through every public/external function. Who can call it? Should they be able to? Check every modifier. Check every owner/admin pattern.</div></div>
+            <div class="step"><div class="step-num">Day 184</div><div class="step-content"><strong>Manual Review — State & Math (4 hrs):</strong> Every state update — is it in the right order (checks-effects-interactions)? Every arithmetic — could it overflow? Every division — could precision be lost?</div></div>
+            <div class="step"><div class="step-num">Day 185</div><div class="step-content"><strong>Foundry Tests + Fuzz (4 hrs):</strong> Write tests for suspicious areas. Write fuzz tests for any function that takes user input. Run with 10,000+ iterations.</div></div>
+            <div class="step"><div class="step-num">Day 186</div><div class="step-content"><strong>Write Your Report (4 hrs):</strong> For every finding, fill in this template:
+<br><br><code>## [H-01] Title of finding</code>
+<br><code>**Severity:** High/Med/Low</code>
+<br><code>**Description:** What is the bug?</code>
+<br><code>**Impact:** What can attacker do?</code>
+<br><code>**Proof of Concept:** (Foundry test)</code>
+<br><code>**Recommendation:** How to fix?</code></div></div>
+            <div class="step"><div class="step-num">Day 187</div><div class="step-content"><strong>Compare with Official Report (4 hrs):</strong> Read the official C4 report. Compare finding by finding. For every High/Critical you missed — read the code again. Understand exactly why you missed it. Add the pattern to your checklist.</div></div>
+            <div class="step"><div class="step-num">Day 188</div><div class="step-content"><strong>Score Yourself + Document:</strong> Highs caught / Total Highs = your detection rate. Target: >50% before going live. Save your report to GitHub. This is your portfolio.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="week-block" id="w16">
+    <div class="week-header" onclick="toggleWeek('w16')">
+      <span class="wk-num">WK 21–22</span>
+      <span class="wk-title">Shadow Audits #2–5 — Days 189–208</span>
+      <span class="wk-meta"><span class="wk-tag tag-m4">Shadow Audits</span><span>20 days</span></span>
+      <span class="wk-chevron" id="cv-w16">▼</span>
+    </div>
+    <div class="week-body" id="wb-w16">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d189')">
+          <div class="day-num-badge badge-m4" id="b-d189">189–208</div>
+          <div class="day-info">
+            <div class="day-title">Repeat Shadow Audit Process — Track Improvement</div>
+            <div class="day-tags"><span class="dtag dtag-critical">Portfolio Build</span><span class="dtag">Track Record</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d189" onclick="markDone('d189', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d189">▼</span>
+        </div>
+        <div class="day-body" id="db-d189">
+          <div class="day-section">
+            <div class="ds-label ds-practice">📊 Progress Tracking</div>
+            <div class="step"><div class="step-num">→</div><div class="step-content">Repeat the 8-day shadow audit process for 4 more completed C4 contests. Pick protocols in different domains: one lending protocol, one DEX, one NFT marketplace, one bridge. Track your detection rate:</div></div>
+          </div>
+          <table class="vuln-table">
+            <tr><th>Audit #</th><th>Protocol Type</th><th>Highs Found</th><th>Highs Total</th><th>Score</th><th>Gate</th></tr>
+            <tr><td>1</td><td>Any under 800 lines</td><td>—</td><td>—</td><td>—%</td><td>Baseline</td></tr>
+            <tr><td>2</td><td>Lending Protocol</td><td>—</td><td>—</td><td>—%</td><td>Improving?</td></tr>
+            <tr><td>3</td><td>DEX / AMM</td><td>—</td><td>—</td><td>—%</td><td>>40%?</td></tr>
+            <tr><td>4</td><td>NFT Marketplace</td><td>—</td><td>—</td><td>—%</td><td>>50%?</td></tr>
+            <tr><td>5</td><td>Bridge / Cross-chain</td><td>—</td><td>—</td><td>—%</td><td>>50% → go live</td></tr>
+          </table>
+          <div class="checkpoint">When your shadow audit score is consistently above 50% of Highs → Enter your first live contest.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="week-block" id="w17">
+    <div class="week-header" onclick="toggleWeek('w17')">
+      <span class="wk-num">WEEK 23</span>
+      <span class="wk-title">First Live Contest — Days 209–216</span>
+      <span class="wk-meta"><span class="wk-tag tag-m4">Live Contest</span><span>8 days</span></span>
+      <span class="wk-chevron" id="cv-w17">▼</span>
+    </div>
+    <div class="week-body" id="wb-w17">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d209')">
+          <div class="day-num-badge badge-m4" id="b-d209">209–216</div>
+          <div class="day-info">
+            <div class="day-title">Your First Real Contest — Real Money, Real Report, Real Experience</div>
+            <div class="day-tags"><span class="dtag dtag-critical">Live Contest</span><span class="dtag">Codehawks</span><span class="dtag">Code4rena</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d209" onclick="markDone('d209', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d209">▼</span>
+        </div>
+        <div class="day-body" id="db-d209">
+          <div class="day-section">
+            <div class="ds-label ds-resource">🔗 Contest Platforms — Enter In This Order</div>
+            <div class="resource-grid">
+              <div class="res-card">
+                <div class="res-name">Codehawks First Flights</div>
+                <div class="res-url">codehawks.cyfrin.io</div>
+                <div class="res-desc">Beginner-tier contests specifically for auditors building their first track record. Smaller codebases, more forgiving judging, active community.</div>
+                <span class="res-tag">ENTER FIRST</span>
+              </div>
+              <div class="res-card">
+                <div class="res-name">Code4rena</div>
+                <div class="res-url">code4rena.com/contests</div>
+                <div class="res-desc">The largest competitive audit platform. After the contest, you can see all wardens' findings — incredible learning from top researchers.</div>
+                <span class="res-tag">Enter 2nd</span>
+              </div>
+              <div class="res-card">
+                <div class="res-name">Sherlock</div>
+                <div class="res-url">audits.sherlock.xyz/contests</div>
+                <div class="res-desc">Higher quality bar, better payouts for top performers. Enter after 3+ C4/Codehawks contests when you have a track record.</div>
+                <span class="res-tag">Month 8+</span>
+              </div>
+              <div class="res-card">
+                <div class="res-name">Immunefi</div>
+                <div class="res-url">immunefi.com</div>
+                <div class="res-desc">Bug bounties — not competitions. Solo hunting. Higher risk, potentially $50k–$500k for critical finds. Start after contest experience.</div>
+                <span class="res-tag">Post-Roadmap</span>
+              </div>
+            </div>
+          </div>
+          <div class="day-section">
+            <div class="ds-label ds-practice">📅 Contest Daily Routine</div>
+            <div class="step"><div class="step-num">Day 1–2</div><div class="step-content"><strong>Architecture & Deep Read:</strong> Read all code. Map every contract. Read the protocol docs/whitepaper. Understand the intended behavior before hunting bugs.</div></div>
+            <div class="step"><div class="step-num">Day 3</div><div class="step-content"><strong>Automated Pass:</strong> Run Slither + your checklist systematically on every contract. Note suspicious areas.</div></div>
+            <div class="step"><div class="step-num">Days 4–5</div><div class="step-content"><strong>Deep Manual Review:</strong> Focus on High-severity patterns first. Write Foundry tests for every suspicious area. Fuzz all user-input functions.</div></div>
+            <div class="step"><div class="step-num">Days 6–7</div><div class="step-content"><strong>Report Writing:</strong> Write findings in the platform's required format. Be precise about impact. Include working POCs for every High.</div></div>
+            <div class="step"><div class="step-num">Day 8</div><div class="step-content"><strong>Submit & Document:</strong> Submit all findings. Save locally. Write personal debrief: what did you miss and why?</div></div>
+          </div>
+          <div class="bug-journal">Expected payout for first contest: $0–$500. This is completely normal. The value is: you'll see all other wardens' findings after the contest ends. Read every single finding — especially the ones you missed. This is worth more than any course.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="week-block" id="w18">
+    <div class="week-header" onclick="toggleWeek('w18')">
+      <span class="wk-num">WK 24–26</span>
+      <span class="wk-title">Portfolio Building, Solodit Habit & Career Path — Days 217–240</span>
+      <span class="wk-meta"><span class="wk-tag tag-m4">Career</span><span>24 days</span></span>
+      <span class="wk-chevron" id="cv-w18">▼</span>
+    </div>
+    <div class="week-body" id="wb-w18">
+      <div class="day-card">
+        <div class="day-header" onclick="toggleDay('d217')">
+          <div class="day-num-badge badge-m4" id="b-d217">217–240</div>
+          <div class="day-info">
+            <div class="day-title">Public Portfolio + Solodit Daily Habit + 2 More Live Contests</div>
+            <div class="day-tags"><span class="dtag dtag-critical">Portfolio</span><span class="dtag">Career</span><span class="dtag dtag-practice">Live Contests</span></div>
+          </div>
+          <button class="day-done-toggle" id="toggle-d217" onclick="markDone('d217', event)" title="Mark done">✓</button>
+          <span class="day-expand-icon" id="ei-d217">▼</span>
+        </div>
+        <div class="day-body" id="db-d217">
+          <div class="day-section">
+            <div class="ds-label ds-practice">📋 Portfolio Structure</div>
+            <div class="step"><div class="step-num">GitHub Repo</div><div class="step-content"><strong>Create: <code>github.com/[yourname]/security-portfolio</code></strong><br>Structure:<br><code>README.md</code> — your audit profile, background, specializations<br><code>shadow-audits/audit-01/</code> — report.md + poc/<br><code>wargames/ethernaut/</code> — all 30 exploit tests<br><code>wargames/dvd/</code> — all 18 challenge solutions<br><code>toolkit/audit-checklist.md</code> — your master checklist<br><code>toolkit/slither-detector/</code> — your custom detector<br><code>contest-submissions/</code> — any live contest reports</div></div>
+            <div class="step"><div class="step-num">Daily Habit</div><div class="step-content"><strong>Solodit morning reading — 30 min every single day:</strong><br><a href="https://solodit.xyz" target="_blank">solodit.xyz</a><br>Search for one vulnerability class. Read 5 real findings. Understand: what was the exact vulnerable pattern? What check was missing? Add patterns to your checklist.</div></div>
+            <div class="step"><div class="step-num">Days 217–230</div><div class="step-content"><strong>Enter 2 more live contests.</strong> Use the same 8-day process. Target: at least 1 valid Medium or High finding submission across the 3 contests. Even a Low finding is a win — it proves you can identify and articulate real issues.</div></div>
+            <div class="step"><div class="step-num">Days 231–240</div><div class="step-content"><strong>Firm Applications.</strong> Your portfolio now has: 5 shadow audit reports, 3 live contest submissions, 80+ wargame solutions, a toolkit repo. Apply to:<br>• <a href="https://www.cyfrin.io/careers" target="_blank">Cyfrin Audit Group</a><br>• <a href="https://guardianaudits.com" target="_blank">Guardian Audits</a><br>• <a href="https://pashov.net" target="_blank">Pashov Audit Group</a><br>• <a href="https://mixbytes.io" target="_blank">MixBytes</a><br>Your GitHub IS your resume. Make sure the README is excellent.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end phase 4 -->
+
+<div class="phase-divider"></div>
+
+<!-- VULNERABILITY CHEATSHEET -->
+<div class="cheat-section" id="vulns">
+  <div class="cheat-title">Master Vulnerability Cheatsheet</div>
+  <div class="cheat-sub">Memorize these. They appear in >80% of all High/Critical findings across all platforms.</div>
+  <table class="vuln-table">
+    <tr>
+      <th>#</th>
+      <th>Vulnerability</th>
+      <th>Quick Detection Pattern</th>
+      <th>Automated Tool</th>
+      <th>Frequency</th>
+    </tr>
+    <tr><td>01</td><td><strong>Re-entrancy (all variants)</strong></td><td>External call before state update; CEI pattern violated</td><td>Slither: reentrancy-eth</td><td class="sev-high">Very High</td></tr>
+    <tr><td>02</td><td><strong>Integer Overflow/Underflow</strong></td><td>Unchecked math pre-Solidity 0.8; unchecked{} blocks</td><td>Slither: integer-overflow</td><td class="sev-high">Very High</td></tr>
+    <tr><td>03</td><td><strong>Access Control Missing</strong></td><td>Public/external function modifying critical state without modifier</td><td>Slither: suicidal, unprotected-upgrade</td><td class="sev-high">Very High</td></tr>
+    <tr><td>04</td><td><strong>tx.origin Authentication</strong></td><td><code>require(tx.origin == owner)</code> anywhere in code</td><td>Slither: tx-origin</td><td class="sev-med">High</td></tr>
+    <tr><td>05</td><td><strong>Storage Collision (Proxy)</strong></td><td>delegatecall used; storage layout mismatch between proxy/impl</td><td>Manual + Slither</td><td class="sev-high">Critical</td></tr>
+    <tr><td>06</td><td><strong>Flash Loan Attack</strong></td><td>Any state snapshot/oracle read that can be manipulated in 1 tx</td><td>Manual</td><td class="sev-high">Very High</td></tr>
+    <tr><td>07</td><td><strong>Oracle Price Manipulation</strong></td><td>Spot price (not TWAP) used for accounting; single-source oracle</td><td>Manual</td><td class="sev-high">Very High</td></tr>
+    <tr><td>08</td><td><strong>Signature Replay</strong></td><td>Missing nonce; missing chainId; signature used across contracts</td><td>Manual</td><td class="sev-high">High</td></tr>
+    <tr><td>09</td><td><strong>Uninitialized Proxy</strong></td><td>initialize() callable by anyone; no initializer modifier</td><td>Slither: uninitialized-local</td><td class="sev-high">Critical</td></tr>
+    <tr><td>10</td><td><strong>Precision Loss</strong></td><td>Division before multiplication; rounding always in user's favor</td><td>Manual</td><td class="sev-med">Medium</td></tr>
+    <tr><td>11</td><td><strong>Weak Randomness</strong></td><td>blockhash, block.timestamp, block.number used as random seed</td><td>Slither: weak-prng</td><td class="sev-high">High</td></tr>
+    <tr><td>12</td><td><strong>DoS via ETH Push</strong></td><td>transfer() or send() to untrusted address; loop over addresses</td><td>Slither: calls-loop</td><td class="sev-high">High</td></tr>
+    <tr><td>13</td><td><strong>Read-Only Re-entrancy</strong></td><td>View function reads state during an active re-entrant call</td><td>Manual</td><td class="sev-high">Critical</td></tr>
+    <tr><td>14</td><td><strong>Fee-on-Transfer Tokens</strong></td><td>assuming received amount == sent amount for external ERC20 tokens</td><td>Manual</td><td class="sev-med">High</td></tr>
+    <tr><td>15</td><td><strong>Front-Running</strong></td><td>No slippage protection; approve/transferFrom race; no deadline</td><td>Manual</td><td class="sev-med">Medium</td></tr>
+    <tr><td>16</td><td><strong>Reentrancy via Callbacks</strong></td><td>ERC777, ERC1155, ERC721 hooks called before state update</td><td>Manual</td><td class="sev-high">High</td></tr>
+    <tr><td>17</td><td><strong>Governance Takeover</strong></td><td>Flash loan to temporarily acquire governance power + immediate vote</td><td>Manual</td><td class="sev-high">Critical</td></tr>
+    <tr><td>18</td><td><strong>Unchecked Return Values</strong></td><td>Low-level call() return value not checked</td><td>Slither: unchecked-lowlevel</td><td class="sev-med">High</td></tr>
+  </table>
+</div>
+
+<!-- WEB3 VS WEB PENTEST -->
+<div class="comparison" id="compare">
+  <div class="comp-header">Web3 Security Auditing vs Traditional Web Pentesting — Honest Comparison</div>
+  <div class="comp-grid">
+    <div class="comp-cell header metric">Dimension</div>
+    <div class="comp-cell header web3">Web3 Auditing</div>
+    <div class="comp-cell header web">Web Pentesting</div>
+    <div class="comp-cell metric">Average senior salary</div>
+    <div class="comp-cell web3">$200k–$1M+ (independent)</div>
+    <div class="comp-cell web">$130–200k (capped)</div>
+    <div class="comp-cell metric">Single critical bug payout</div>
+    <div class="comp-cell web3">$5k–$500k (Immunefi)</div>
+    <div class="comp-cell web">$500–$50k (HackerOne)</div>
+    <div class="comp-cell metric">Market saturation</div>
+    <div class="comp-cell web3">Low-medium (still growing)</div>
+    <div class="comp-cell web">High (very competitive)</div>
+    <div class="comp-cell metric">Skill ramp to paid work</div>
+    <div class="comp-cell web3">8–12 months</div>
+    <div class="comp-cell web">3–6 months</div>
+    <div class="comp-cell metric">Your C/RE background</div>
+    <div class="comp-cell web3">Massive advantage (opcodes, memory)</div>
+    <div class="comp-cell web">Moderate advantage</div>
+    <div class="comp-cell metric">Remote & independent</div>
+    <div class="comp-cell web3">Yes, fully</div>
+    <div class="comp-cell web">Yes, mostly</div>
+    <div class="comp-cell metric">Career ceiling</div>
+    <div class="comp-cell web3">Truly uncapped</div>
+    <div class="comp-cell web">Firm or consulting plateau</div>
+    <div class="comp-cell metric">Verdict</div>
+    <div class="comp-cell web3" style="color:#fff;font-weight:500">Worth the switch if you commit fully. Don't quit pentesting until Month 11.</div>
+    <div class="comp-cell web" style="color:var(--text3)">Keep as income during transition period</div>
+  </div>
+</div>
+
+<!-- QUICK REFERENCE -->
+<div class="quick-ref" id="quickref">
+  <div class="comp-header">Master Resource Index — Every Link You Need</div>
+  <div class="comp-grid">
+    <div class="comp-cell header">Resource</div>
+    <div class="comp-cell header">URL</div>
+    <div class="comp-cell header">When to Use</div>
+
+    <div class="comp-cell">Remix IDE</div>
+    <div class="comp-cell"><a href="https://remix.ethereum.org" target="_blank" style="color:var(--cyan)">remix.ethereum.org</a></div>
+    <div class="comp-cell">All of Phase 1 (Months 1–2)</div>
+
+    <div class="comp-cell">EVM Opcodes Reference</div>
+    <div class="comp-cell"><a href="https://evm.codes" target="_blank" style="color:var(--cyan)">evm.codes</a></div>
+    <div class="comp-cell">Daily reference throughout Phase 1</div>
+
+    <div class="comp-cell">Cyfrin Updraft</div>
+    <div class="comp-cell"><a href="https://updraft.cyfrin.io" target="_blank" style="color:var(--cyan)">updraft.cyfrin.io</a></div>
+    <div class="comp-cell">Primary course platform — Weeks 4, 16–18</div>
+
+    <div class="comp-cell">Patrick Collins (YouTube)</div>
+    <div class="comp-cell"><a href="https://youtube.com/watch?v=gyMwXuJrbJQ" target="_blank" style="color:var(--cyan)">32hr Solidity Course</a></div>
+    <div class="comp-cell">Days 1–14 — primary video resource</div>
+
+    <div class="comp-cell">Smart Contract Programmer</div>
+    <div class="comp-cell"><a href="https://youtube.com/@smartcontractprogrammer" target="_blank" style="color:var(--cyan)">@smartcontractprogrammer</a></div>
+    <div class="comp-cell">Short topic videos — Delegatecall, Assembly, etc.</div>
+
+    <div class="comp-cell">Noxx EVM Deep Dive</div>
+    <div class="comp-cell"><a href="https://noxx.substack.com" target="_blank" style="color:var(--cyan)">noxx.substack.com</a></div>
+    <div class="comp-cell">Days 4, 5 — best EVM internals explainer</div>
+
+    <div class="comp-cell">Secureum Bootcamp</div>
+    <div class="comp-cell"><a href="https://secureum.substack.com" target="_blank" style="color:var(--cyan)">secureum.substack.com</a></div>
+    <div class="comp-cell">Week 5 — security theory foundation</div>
+
+    <div class="comp-cell">Ethernaut</div>
+    <div class="comp-cell"><a href="https://ethernaut.openzeppelin.com" target="_blank" style="color:var(--cyan)">ethernaut.openzeppelin.com</a></div>
+    <div class="comp-cell">Days 36–60 — Wargame #1</div>
+
+    <div class="comp-cell">Damn Vulnerable DeFi</div>
+    <div class="comp-cell"><a href="https://damnvulnerabledefi.xyz" target="_blank" style="color:var(--cyan)">damnvulnerabledefi.xyz</a></div>
+    <div class="comp-cell">Days 61–98 — Wargame #2</div>
+
+    <div class="comp-cell">Capture The Ether</div>
+    <div class="comp-cell"><a href="https://capturetheether.com" target="_blank" style="color:var(--cyan)">capturetheether.com</a></div>
+    <div class="comp-cell">Days 113–117 — Wargame #3</div>
+
+    <div class="comp-cell">DeFiHackLabs POCs</div>
+    <div class="comp-cell"><a href="https://github.com/SunWeb3Sec/DeFiHackLabs" target="_blank" style="color:var(--cyan)">SunWeb3Sec/DeFiHackLabs</a></div>
+    <div class="comp-cell">Days 99–112 + weekly forever after</div>
+
+    <div class="comp-cell">Rekt News</div>
+    <div class="comp-cell"><a href="https://rekt.news" target="_blank" style="color:var(--cyan)">rekt.news</a></div>
+    <div class="comp-cell">Days 99–112 + weekly forever after</div>
+
+    <div class="comp-cell">Solodit</div>
+    <div class="comp-cell"><a href="https://solodit.xyz" target="_blank" style="color:var(--cyan)">solodit.xyz</a></div>
+    <div class="comp-cell">Daily 30min from Day 120 onward — forever</div>
+
+    <div class="comp-cell">Foundry Book</div>
+    <div class="comp-cell"><a href="https://book.getfoundry.sh" target="_blank" style="color:var(--cyan)">book.getfoundry.sh</a></div>
+    <div class="comp-cell">Weeks 3–4 + reference throughout</div>
+
+    <div class="comp-cell">Slither</div>
+    <div class="comp-cell"><a href="https://github.com/crytic/slither" target="_blank" style="color:var(--cyan)">crytic/slither</a></div>
+    <div class="comp-cell">Week 15 + every audit forever</div>
+
+    <div class="comp-cell">Building Secure Contracts</div>
+    <div class="comp-cell"><a href="https://github.com/crytic/building-secure-contracts" target="_blank" style="color:var(--cyan)">crytic/building-secure-contracts</a></div>
+    <div class="comp-cell">Weeks 15–16 — Slither + Echidna tutorials</div>
+
+    <div class="comp-cell">OpenZeppelin Contracts</div>
+    <div class="comp-cell"><a href="https://github.com/OpenZeppelin/openzeppelin-contracts" target="_blank" style="color:var(--cyan)">OZ/openzeppelin-contracts</a></div>
+    <div class="comp-cell">Days 8–10 + reference throughout</div>
+
+    <div class="comp-cell">SWC Registry</div>
+    <div class="comp-cell"><a href="https://swcregistry.io" target="_blank" style="color:var(--cyan)">swcregistry.io</a></div>
+    <div class="comp-cell">Days 118–120 — vulnerability taxonomy</div>
+
+    <div class="comp-cell">Solidity Docs</div>
+    <div class="comp-cell"><a href="https://docs.soliditylang.org" target="_blank" style="color:var(--cyan)">docs.soliditylang.org</a></div>
+    <div class="comp-cell">Phase 1 reference — bookmark it</div>
+
+    <div class="comp-cell">Code4rena</div>
+    <div class="comp-cell"><a href="https://code4rena.com" target="_blank" style="color:var(--cyan)">code4rena.com</a></div>
+    <div class="comp-cell">Shadow audits (reports) + live contests</div>
+
+    <div class="comp-cell">Codehawks (First Flights)</div>
+    <div class="comp-cell"><a href="https://codehawks.cyfrin.io" target="_blank" style="color:var(--cyan)">codehawks.cyfrin.io</a></div>
+    <div class="comp-cell">First live contest platform (beginner-friendly)</div>
+
+    <div class="comp-cell">Immunefi</div>
+    <div class="comp-cell"><a href="https://immunefi.com" target="_blank" style="color:var(--cyan)">immunefi.com</a></div>
+    <div class="comp-cell">Bug bounties — after 3+ live contests</div>
+
+    <div class="comp-cell">CryptoZombies</div>
+    <div class="comp-cell"><a href="https://cryptozombies.io" target="_blank" style="color:var(--cyan)">cryptozombies.io</a></div>
+    <div class="comp-cell">Days 7, 12–13 — gamified reinforcement</div>
+
+    <div class="comp-cell">EIP-20 (ERC20)</div>
+    <div class="comp-cell"><a href="https://eips.ethereum.org/EIPS/eip-20" target="_blank" style="color:var(--cyan)">eips.ethereum.org/EIPS/eip-20</a></div>
+    <div class="comp-cell">Day 8 — read the standard completely</div>
+
+    <div class="comp-cell">EIP-721 (ERC721)</div>
+    <div class="comp-cell"><a href="https://eips.ethereum.org/EIPS/eip-721" target="_blank" style="color:var(--cyan)">eips.ethereum.org/EIPS/eip-721</a></div>
+    <div class="comp-cell">Day 9 — read the standard completely</div>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<button id="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+<script>
+// Track done days
+const DONE_KEY = 'web3_done_days';
+let doneDays = JSON.parse(localStorage.getItem(DONE_KEY) || '[]');
+
+function markDone(dayId, e) {
+  e.stopPropagation();
+  const toggle = document.getElementById('toggle-' + dayId);
+  const header = toggle.closest('.day-header');
+  const badge = document.getElementById('b-' + dayId);
+  
+  if (doneDays.includes(dayId)) {
+    doneDays = doneDays.filter(d => d !== dayId);
+    toggle.classList.remove('checked');
+    header.classList.remove('done');
+  } else {
+    doneDays.push(dayId);
+    toggle.classList.add('checked');
+    header.classList.add('done');
+  }
+  localStorage.setItem(DONE_KEY, JSON.stringify(doneDays));
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = document.querySelectorAll('.day-done-toggle').length;
+  const done = doneDays.length;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('progBar').style.width = pct + '%';
+  document.getElementById('progPct').textContent = pct + '%';
+  document.getElementById('doneCount').textContent = done;
+}
+
+function restoreDone() {
+  doneDays.forEach(dayId => {
+    const toggle = document.getElementById('toggle-' + dayId);
+    if (toggle) {
+      const header = toggle.closest('.day-header');
+      toggle.classList.add('checked');
+      header.classList.add('done');
+    }
+  });
+  updateProgress();
+}
+
+// Toggle day
+function toggleDay(id) {
+  const body = document.getElementById('db-' + id);
+  const icon = document.getElementById('ei-' + id);
+  const isOpen = body.classList.toggle('open');
+  icon.classList.toggle('open', isOpen);
+}
+
+// Toggle week
+function toggleWeek(id) {
+  const body = document.getElementById('wb-' + id);
+  const header = body.previousElementSibling;
+  const cv = document.getElementById('cv-' + id);
+  const isOpen = body.classList.toggle('open');
+  cv.classList.toggle('open', isOpen);
+  header.classList.toggle('open', isOpen);
+}
+
+function openWeek(id) {
+  const body = document.getElementById('wb-' + id);
+  if (body && !body.classList.contains('open')) {
+    toggleWeek(id);
+  }
+}
+
+// Phase filter
+function filterPhase(phase, tab) {
+  document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  
+  document.querySelectorAll('.phase-section, .phase-divider').forEach(el => {
+    if (phase === 'all') {
+      el.style.display = '';
+    } else {
+      if (el.classList.contains('phase-divider')) {
+        el.style.display = phase === 'all' ? '' : 'none';
+      } else {
+        el.style.display = (el.dataset.phase === phase) ? '' : 'none';
+      }
+    }
+  });
+}
+
+// Nav search
+function filterNav(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('.nav-item').forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+
+// Active nav highlighting
+function updateActiveNav() {
+  const scrollY = document.getElementById('main').scrollTop;
+  const sections = document.querySelectorAll('[id^="w"], [id="vulns"], [id="quickref"], [id="compare"]');
+  let active = null;
+  sections.forEach(sec => {
+    if (sec.offsetTop - 100 <= scrollY) active = sec.id;
+  });
+  document.querySelectorAll('.nav-item').forEach(item => {
+    const href = item.getAttribute('href');
+    if (href && active && href === '#' + active) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+}
+
+// Sidebar mobile
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  restoreDone();
+  // Open week 1 by default
+  toggleWeek('w1');
+  
+  document.getElementById('main').addEventListener('scroll', updateActiveNav);
+});
+</script>
+</body>
+</html>
